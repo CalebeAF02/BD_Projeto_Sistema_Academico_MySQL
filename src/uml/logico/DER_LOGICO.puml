@@ -7,6 +7,7 @@ skinparam nodesep 100
 skinparam ranksep 150
 skinparam minClassWidth 150
 
+' ENTIDADES PRINCIPAIS
 entity Pessoa {
   * id : int <<PK>>
   --
@@ -16,11 +17,80 @@ entity Pessoa {
   data_nascimento : date
 }
 
+entity Conta {
+  * id : int <<PK>>
+  --
+  id_pessoa : int <<FK>>
+  email : string
+  senha : string
+  tipo : string
+  data_criacao : date
+  status : string
+}
+
+entity Departamento {
+  * id : int <<PK>>
+  --
+  nome : string
+}
+
+entity Predio {
+  * id : int <<PK>>
+  --
+  id_departamento : int <<FK>>
+  nome : string
+  rua : string
+  numero : int
+  complemento : string
+  bairro : string
+  cidade : string
+  estado : string
+  cep : string
+}
+
+entity Sala {
+  * id : int <<PK>>
+  --
+  id_predio : int <<FK>>
+  codigo : string
+  capacidade : int
+}
+
 entity Curso {
   * id : int <<PK>>
   --
   nome : string
   sigla : string
+}
+
+entity Semestre {
+  * id : int <<PK>>
+  --
+  nome : string
+  data_inicio : date
+  data_fim : date
+}
+
+entity Disciplina {
+  * id : int <<PK>>
+  --
+  codigo : string
+  nome : string
+}
+
+' ENTIDADES DE USUÁRIO
+entity Aluno {
+  * id_pessoa : int <<PK, FK>>
+  --
+  tipo : enum
+}
+
+entity Professor {
+  * id_pessoa : int <<PK, FK>>
+  --
+  id_departamento : int <<FK>>
+  tipo : enum
+  nivel : enum
 }
 
 entity Matricula_Curso {
@@ -34,93 +104,55 @@ entity Matricula_Curso {
   status : string
 }
 
-entity Aluno {
-  * id_pessoa : int <<PK, FK>>
-  --
-  id_curso : int <<FK>>
-  id_conta : int <<FK>>
-  tipo : enum
-}
-
-entity Professor {
-  * id_pessoa : int <<PK, FK>>
-    --
-  id_conta : int <<FK>>
-  id_departamento : int <<FK>>
-  tipo : enum
-  nivel : enum
-
-}
-
-entity Conta {
-  * id : int <<PK>>
-  --
-  email : string
-  senha : string
-  tipo : string
-  data_criacao : date
-  status : string
-
-}
-
-entity Departamento {
-  * id : int <<PK>>
-  --
-  nome : string
-}
-
-entity Oferta {
-  * id : int <<PK>>
-  --
-  id_disciplina : int <<FK>>
-  id_curso : int <<FK>>
-  id_semestre : int <<FK>>
-}
-
-entity Semestre {
-  * id : int <<PK>>
-  --
-  data_inicio : date
-  data_fim : date
-}
-
-
-entity Disciplina {
-  * id : int <<PK>>
-  --
-  codigo : string
-  nome : string
-}
-
-entity Professor_Disciplina {
-  * id : int <<PK>>
-  --
-  id_professor : int <<FK>>
-  id_turma : int <<FK>>
-  carga_horaria : int
-  data_inicio : date
-  data_fim : date
-}
-
-entity Turma {
-  * id : int <<PK>>
-  --
-  id_professor : int <<FK>>
-  quantidade_vagas : int
-}
-
 entity Matricula_Disciplina {
   * id : int <<PK>>
   --
-  id_aluno : int <<FK>>
   id_matricula_curso : int <<FK>>
-  id_disciplina : int <<FK>>
   id_turma : int <<FK>>
   codigo : string
   data_matricula : date
   data_trancamento : date
   nota : float
   status : enum
+}
+
+entity Oferta {
+  * id : int <<PK>>
+  --
+  id_departamento : int <<FK>>
+  id_disciplina : int <<FK>>
+  id_curso : int <<FK>>
+  id_semestre : int <<FK>>
+  codigo_oferta : string
+}
+
+entity Turma {
+  * id : int <<PK>>
+  --
+  id_oferta : int <<FK>>
+  codigo : string
+  quantidade_vagas : int
+}
+
+entity Professor_Turma {
+  * id : int <<PK>>
+  --
+  id_professor : int <<FK>>
+  id_turma : int <<FK>>
+  funcao : enum
+  carga_horaria : int
+  data_inicio : date
+  data_fim : date
+}
+
+' AVALIAÇÃO E FREQUÊNCIA
+entity Aula {
+  * id : int <<PK>>
+  --
+  id_turma : int <<FK>>
+  data : date
+  tipo : string
+  conteudo : string
 }
 
 entity Avaliacao {
@@ -134,6 +166,7 @@ entity Avaliacao {
   nota_maxima : float
   data_aplicacao : date
   prazo : date
+  status : enum
 }
 
 entity Resultado_Avaliacao {
@@ -145,15 +178,6 @@ entity Resultado_Avaliacao {
   feedback : string
   status : enum
   data_entrega : date
-}
-
-entity Aula {
-  * id : int <<PK>>
-  --
-  id_turma : int <<FK>>
-  data : date
-  tipo : string
-  conteudo : string
 }
 
 entity Frequencia {
@@ -195,17 +219,7 @@ entity Meta_Estudo {
   titulo : string
   horas : int
   prazo : date
-}
-
-entity Notificacao_Conta {
-  * id : int <<PK>>
-  --
-  id_conta : int <<FK>>
-  id_notificacao : int <<FK>>
-  data_envio : datetime
-  data_rescebmento : datetime
-  lida : bolean
-  mensagem_resposta : string
+  status : enum
 }
 
 entity Notificacao {
@@ -215,121 +229,72 @@ entity Notificacao {
   descricao : string
   tipo : string
   mensagem : string
+  data_criacao : datetime
 }
 
-entity Predio {
+entity Notificacao_Conta {
   * id : int <<PK>>
   --
-  id_departamento : int <<FK>>
-  nome : string
-  rua : string
-  numero : int
-  complemento : string
-  bairro : string
-  cidade : string
-  estado : string
-  cep : string
+  id_conta : int <<FK>>
+  id_notificacao : int <<FK>>
+  data_envio : datetime
+  data_recebimento : datetime
+  lida : boolean
+  mensagem_resposta : string
 }
 
-
-entity Sala {
-  * id : int <<PK>>
-  --
-  id_predio : int <<FK>>
-  codigo : string
-  capacidade : int
-}
-
-entity Alocacao_Sala {
-  * id : int <<PK>>
-  --
-  id_turma : int <<FK>>
-  id_sala : int <<FK>>
-  dia_semana : string
-  hora_abertura : time
-  hora_fechamento : time
-  status : boolean
-}
-
-' Relacionamentos
+' RELACIONAMENTOS
 ' HERANÇA E CONTA
-
-Pessoa "1" ||--o| "0..1" Aluno : "PODE SER"
-Pessoa "1" ||--o| "0..1" Professor : "PODE SER"
-
-Aluno "1" ||--|| "1" Conta : "POSSUI"
-Professor "1" ||--|| "1" Conta : "POSSUI"
+Pessoa <|-- Aluno
+Pessoa <|-- Professor
+Pessoa "1" ||--o| "0..1" Conta
 
 ' CURSO E MATRÍCULA
-
 Curso "1" ||--o{ "0..n" Matricula_Curso : "POSSUI"
 Aluno "1" ||--o{ "0..n" Matricula_Curso : "REALIZA"
-Matricula_Curso "1" ||--o{ "0..n" Matricula_Disciplina : "POSSUI"
 
 ' OFERTA ACADÊMICA
-
-Curso "1" ||--o{ "0..n" Disciplina : "CONTÉM"
-
-Curso "1" ||--o{ "0..n" Oferta : "OFERECE"
+Curso "1" ||--o{ "0..n" Oferta : "ABRANGE"
 Disciplina "1" ||--o{ "0..n" Oferta : "É OFERTADA EM"
 Semestre "1" ||--o{ "0..n" Oferta : "ABRANGE"
+Departamento "1" ||--o{ "0..n" Oferta : "ABRANGE"
+Oferta "1" ||--o{ "0..n" Turma : "GERA"
 
-' PROFESSOR E TURMA
-
-Professor "1" ||--o{ "0..n" Professor_Disciplina : "MINISTRA"
-
-Professor "1" ||--o| "0..n" Departamento : "PERTENCE A"
-
-Professor "1" ||--o{ "0..n" Turma : "MINISTRA"
-
-Professor_Disciplina "1" ||--o{ "0..n" Turma : "ASSOCIA"
+' PROFESSORES E TURMAS
+Professor "1" ||--o{ "0..n" Professor_Turma : "MINISTRA"
+Departamento "1" ||--o{ "0..n" Professor : "POSSUI"
+Turma "1" ||--o{ "0..n" Professor_Turma : "POSSUI"
 
 ' MATRÍCULA EM DISCIPLINA
-
-Disciplina "1" ||--o{ "0..n" Matricula_Disciplina : "TEM"
 Turma "1" ||--o{ "0..n" Matricula_Disciplina : "RECEBE"
-Aluno "1" ||--o{ "0..n" Matricula_Disciplina : "REALIZA"
+Matricula_Curso "1" ||--o{ "0..n" Matricula_Disciplina : "REALIZA"
 
 ' AVALIAÇÕES
-
 Turma "1" ||--o{ "0..n" Avaliacao : "TEM"
-
 Avaliacao "1" ||--o{ "0..n" Resultado_Avaliacao : "GERA"
-
 Matricula_Disciplina "1" ||--o{ "0..n" Resultado_Avaliacao : "PRODUZ"
 
 ' FREQUÊNCIA
-
-Turma "1" ||--o{ "0..n" Aula : "CONTA"
-
 Aula "1" ||--o{ "0..n" Frequencia : "CONTÉM"
-
+Turma "1" ||--o{ "0..n" Aula : "POSSUI"
 Matricula_Disciplina "1" ||--o{ "0..n" Frequencia : "REGISTRA"
 
 ' EVENTOS
-
 Turma "1" ||--o{ "0..n" Evento : "OCORRE EM"
 
 ' MATERIAL DE ESTUDO
-
 Disciplina "1" ||--o{ "0..n" Material_Estudo : "POSSUI"
 
 ' METAS
-
 Aluno "1" ||--o{ "0..n" Meta_Estudo : "DEFINE"
 
 ' NOTIFICAÇÕES
-
 Conta "1" ||--o{ "0..n" Notificacao_Conta : "RECEBE"
-
 Notificacao "1" ||--o{ "0..n" Notificacao_Conta : "É ENVIADA PARA"
 
 ' INFRAESTRUTURA
-
 Departamento "1" ||--o{ "0..n" Predio : "POSSUI"
 Predio "1" ||--o{ "0..n" Sala : "ABRIGA"
-
 Sala "1" ||--o{ "0..n" Alocacao_Sala : "RECEBE"
-
 Turma "1" ||--o{ "0..n" Alocacao_Sala : "OCUPA"
 @enduml
