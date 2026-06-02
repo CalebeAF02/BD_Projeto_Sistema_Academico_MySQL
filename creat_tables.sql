@@ -106,13 +106,14 @@ CREATE TABLE predio (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_departamento INT NOT NULL,
     nome VARCHAR(100) NOT NULL,
-    rua VARCHAR(150),
+    endereco VARCHAR(150),
     numero INT,
-    complemento VARCHAR(50),
+    conjunto VARCHAR(20),
+    ql VARCHAR(20),
+    quadra VARCHAR(20),
     bairro VARCHAR(100),
     cidade VARCHAR(100),
     estado CHAR(2),
-    cep VARCHAR(9),
     FOREIGN KEY (id_departamento) REFERENCES departamento(id)
 );
 
@@ -136,8 +137,8 @@ CREATE TABLE matricula_curso (
     id_aluno INT NOT NULL,
     id_curso INT NOT NULL,
     codigo VARCHAR(20) UNIQUE NOT NULL,  -- número de matrícula UnB
-    data_matricula DATE NOT NULL,
-    data_trancamento DATE,
+    data_matricula_curso DATE NOT NULL,
+    data_trancamento_curso DATE,
     status ENUM('ATIVA', 'TRANCADA', 'CONCLUIDA', 'CANCELADA') NOT NULL DEFAULT 'ATIVA',
     FOREIGN KEY (id_aluno) REFERENCES aluno(id_pessoa) ON DELETE CASCADE,
     FOREIGN KEY (id_curso) REFERENCES curso(id)
@@ -168,18 +169,18 @@ CREATE TABLE turma (
     FOREIGN KEY (id_oferta) REFERENCES oferta(id) ON DELETE CASCADE
 );
 
--- PROFESSOR_TURMA ----------------------------------------------------
--- Liga professor à turma com função (titular/auxiliar/monitor).
-CREATE TABLE professor_turma (
+-- PROFESSOR_DISCIPLINA -----------------------------------------------
+-- Liga professor à disciplina (relação 'ministra' do DER conceitual).
+CREATE TABLE professor_disciplina (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_professor INT NOT NULL,
-    id_turma INT NOT NULL,
+    id_disciplina INT NOT NULL,
     funcao ENUM('TITULAR', 'CO_RESPONSAVEL', 'MONITOR') NOT NULL DEFAULT 'TITULAR',
     carga_horaria INT,
     data_inicio DATE,
     data_fim DATE,
     FOREIGN KEY (id_professor) REFERENCES professor(id_pessoa),
-    FOREIGN KEY (id_turma) REFERENCES turma(id) ON DELETE CASCADE
+    FOREIGN KEY (id_disciplina) REFERENCES disciplina(id) ON DELETE CASCADE
 );
 
 -- MATRICULA_DISCIPLINA -----------------------------------------------
@@ -189,8 +190,8 @@ CREATE TABLE matricula_disciplina (
     id_matricula_curso INT NOT NULL,
     id_turma INT NOT NULL,
     codigo VARCHAR(30),
-    data_matricula DATE NOT NULL,
-    data_trancamento DATE,
+    data_matricula_disciplina DATE NOT NULL,
+    data_trancamento_disciplina DATE,
     nota DECIMAL(5,2),  -- nota final consolidada
     status ENUM('MATRICULADO', 'APROVADO', 'REPROVADO', 'TRANCADO') NOT NULL DEFAULT 'MATRICULADO',
     FOREIGN KEY (id_matricula_curso) REFERENCES matricula_curso(id) ON DELETE CASCADE,
@@ -268,8 +269,8 @@ CREATE TABLE evento (
     FOREIGN KEY (id_turma) REFERENCES turma(id) ON DELETE CASCADE
 );
 
--- MATERIAL_ESTUDO ----------------------------------------------------
-CREATE TABLE material_estudo (
+-- MATERIAL_DE_ESTUDO -------------------------------------------------
+CREATE TABLE material_de_estudo (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_disciplina INT NOT NULL,
     titulo VARCHAR(100) NOT NULL,
@@ -279,8 +280,8 @@ CREATE TABLE material_estudo (
     FOREIGN KEY (id_disciplina) REFERENCES disciplina(id) ON DELETE CASCADE
 );
 
--- META_ESTUDO --------------------------------------------------------
-CREATE TABLE meta_estudo (
+-- META_DE_ESTUDO -----------------------------------------------------
+CREATE TABLE meta_de_estudo (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_aluno INT NOT NULL,
     titulo VARCHAR(100),
@@ -337,58 +338,3 @@ CREATE INDEX idx_matricula_curso_codigo ON matricula_curso(codigo);
 CREATE INDEX idx_oferta_codigo ON oferta(codigo_oferta);
 CREATE INDEX idx_aula_data ON aula(data);
 
--- =====================================================================
--- SUGESTÕES PARA A ENTREGA FINAL (View, Procedure, Trigger)
--- Deixadas como referência — implementar perto de 30/06.
--- =====================================================================
-
--- VIEW sugerida: histórico escolar do aluno
--- CREATE OR REPLACE VIEW vw_historico_aluno AS
--- SELECT p.nome AS aluno, c.nome AS curso, d.nome AS disciplina,
---        s.nome AS semestre, md.nota, md.status
--- FROM matricula_disciplina md
--- JOIN matricula_curso mc ON md.id_matricula_curso = mc.id
--- JOIN aluno a ON mc.id_aluno = a.id_pessoa
--- JOIN pessoa p ON a.id_pessoa = p.id
--- JOIN curso c ON mc.id_curso = c.id
--- JOIN turma t ON md.id_turma = t.id
--- JOIN oferta o ON t.id_oferta = o.id
--- JOIN disciplina d ON o.id_disciplina = d.id
--- JOIN semestre s ON o.id_semestre = s.id;
-
--- PROCEDURE sugerida: matricular aluno numa turma com validação de vagas
--- DELIMITER $$
--- CREATE PROCEDURE sp_matricular_aluno_em_turma(
---     IN p_id_matricula_curso INT,
---     IN p_id_turma INT
--- )
--- BEGIN
---     DECLARE vagas_disp INT;
---     SELECT t.quantidade_vagas - COUNT(md.id) INTO vagas_disp
---     FROM turma t LEFT JOIN matricula_disciplina md ON md.id_turma = t.id
---     WHERE t.id = p_id_turma GROUP BY t.id;
---     IF vagas_disp > 0 THEN
---         INSERT INTO matricula_disciplina (id_matricula_curso, id_turma, data_matricula)
---         VALUES (p_id_matricula_curso, p_id_turma, CURDATE());
---     ELSE
---         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Turma sem vagas';
---     END IF;
--- END$$
--- DELIMITER ;
-
--- TRIGGER sugerido: ao inserir resultado, atualiza status da matrícula
--- DELIMITER $$
--- CREATE TRIGGER tg_atualiza_nota_final
--- AFTER INSERT ON resultado_avaliacao
--- FOR EACH ROW
--- BEGIN
---     UPDATE matricula_disciplina
---     SET nota = (
---         SELECT SUM(ra.nota * a.peso) / SUM(a.peso)
---         FROM resultado_avaliacao ra
---         JOIN avaliacao a ON ra.id_avaliacao = a.id
---         WHERE ra.id_matricula_disciplina = NEW.id_matricula_disciplina
---     )
---     WHERE id = NEW.id_matricula_disciplina;
--- END$$
--- DELIMITER ;
