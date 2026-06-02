@@ -41,10 +41,12 @@ entity Predio {
   nome : string
   rua : string
   numero : int
-  complemento : string
+  conjunto : string
+  ql : string
+  quadra : string
   bairro : string
   cidade : string
-  estado : string
+  estado : char
   cep : string
 }
 
@@ -112,7 +114,7 @@ entity Matricula_Disciplina {
   codigo : string
   data_matricula : date
   data_trancamento : date
-  nota : float
+  nota : decimal
   status : enum
 }
 
@@ -152,7 +154,7 @@ entity Aula {
   id_turma : int <<FK>>
   data : date
   tipo : string
-  conteudo : string
+  conteudo : text
 }
 
 entity Avaliacao {
@@ -160,10 +162,10 @@ entity Avaliacao {
   --
   id_turma : int <<FK>>
   titulo : string
-  descricao : string
+  descricao : text
   tipo : string
-  peso : float
-  nota_maxima : float
+  peso : decimal
+  nota_maxima : decimal
   data_aplicacao : date
   prazo : date
   status : enum
@@ -175,7 +177,7 @@ entity Resultado_Avaliacao {
   id_avaliacao : int <<FK>>
   id_matricula_disciplina : int <<FK>>
   nota : float
-  feedback : string
+  feedback : text
   status : enum
   data_entrega : date
 }
@@ -187,7 +189,7 @@ entity Frequencia {
   id_matricula_disciplina : int <<FK>>
   presente : boolean
   data_registro : date
-  observacao : string
+  observacao : text
 }
 
 entity Evento {
@@ -195,24 +197,24 @@ entity Evento {
   --
   id_turma : int <<FK>>
   titulo : string
-  descricao : string
+  descricao : text
   tipo : string
   data_inicio : datetime
   data_fim : datetime
   local : string
 }
 
-entity Material_Estudo {
+entity Material_de_Estudo {
   * id : int <<PK>>
   --
   id_disciplina : int <<FK>>
   titulo : string
-  descricao : string
+  descricao : text
   tipo : string
-  link : string
+  link : text
 }
 
-entity Meta_Estudo {
+entity Meta_de_Estudo {
   * id : int <<PK>>
   --
   id_aluno : int <<FK>>
@@ -220,6 +222,17 @@ entity Meta_Estudo {
   horas : int
   prazo : date
   status : enum
+}
+
+entity Alocacao_Sala {
+  * id : int <<PK>>
+  --
+  id_turma : int <<FK>>
+  id_sala : int <<FK>>
+  dia_semana : enum
+  hora_abertura : time
+  hora_fechamento : time
+  status : boolean
 }
 
 entity Notificacao {
@@ -240,7 +253,7 @@ entity Notificacao_Conta {
   data_envio : datetime
   data_recebimento : datetime
   lida : boolean
-  mensagem_resposta : string
+  mensagem_resposta : text
 }
 
 ' RELACIONAMENTOS
@@ -283,10 +296,10 @@ Matricula_Disciplina "1" ||--o{ "0..n" Frequencia : "REGISTRA"
 Turma "1" ||--o{ "0..n" Evento : "OCORRE EM"
 
 ' MATERIAL DE ESTUDO
-Disciplina "1" ||--o{ "0..n" Material_Estudo : "POSSUI"
+Disciplina "1" ||--o{ "0..n" Material_de_Estudo : "POSSUI"
 
 ' METAS
-Aluno "1" ||--o{ "0..n" Meta_Estudo : "DEFINE"
+Aluno "1" ||--o{ "0..n" Meta_de_Estudo : "DEFINE"
 
 ' NOTIFICAÇÕES
 Conta "1" ||--o{ "0..n" Notificacao_Conta : "RECEBE"

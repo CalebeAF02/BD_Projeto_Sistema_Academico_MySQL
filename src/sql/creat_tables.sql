@@ -59,7 +59,7 @@ CREATE TABLE notificacao (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(150) NOT NULL,
     descricao TEXT,
-    tipo VARCHAR(50),
+    tipo VARCHAR(50) NOT NULL,
     mensagem TEXT NOT NULL,
     data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
 );
@@ -106,7 +106,7 @@ CREATE TABLE predio (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_departamento INT NOT NULL,
     nome VARCHAR(100) NOT NULL,
-    endereco VARCHAR(150),
+    rua VARCHAR(100),
     numero INT,
     conjunto VARCHAR(20),
     ql VARCHAR(20),
@@ -114,6 +114,7 @@ CREATE TABLE predio (
     bairro VARCHAR(100),
     cidade VARCHAR(100),
     estado CHAR(2),
+    cep varchar(15),
     FOREIGN KEY (id_departamento) REFERENCES departamento(id)
 );
 
@@ -121,7 +122,7 @@ CREATE TABLE predio (
 CREATE TABLE sala (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_predio INT NOT NULL,
-    codigo VARCHAR(20) NOT NULL,
+    codigo VARCHAR(20) UNIQUE NOT NULL,
     capacidade INT NOT NULL,
     FOREIGN KEY (id_predio) REFERENCES predio(id) ON DELETE CASCADE
 );
@@ -164,23 +165,23 @@ CREATE TABLE oferta (
 CREATE TABLE turma (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_oferta INT NOT NULL,
-    codigo VARCHAR(20) NOT NULL,
+    codigo VARCHAR(20) UNIQUE NOT NULL,
     quantidade_vagas INT NOT NULL,
     FOREIGN KEY (id_oferta) REFERENCES oferta(id) ON DELETE CASCADE
 );
 
 -- PROFESSOR_DISCIPLINA -----------------------------------------------
 -- Liga professor à disciplina (relação 'ministra' do DER conceitual).
-CREATE TABLE professor_disciplina (
+CREATE TABLE professor_turma (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_professor INT NOT NULL,
-    id_disciplina INT NOT NULL,
+    id_turma INT NOT NULL,
     funcao ENUM('TITULAR', 'CO_RESPONSAVEL', 'MONITOR') NOT NULL DEFAULT 'TITULAR',
     carga_horaria INT,
     data_inicio DATE,
     data_fim DATE,
     FOREIGN KEY (id_professor) REFERENCES professor(id_pessoa),
-    FOREIGN KEY (id_disciplina) REFERENCES disciplina(id) ON DELETE CASCADE
+    FOREIGN KEY (id_turma) REFERENCES turma(id) ON DELETE CASCADE
 );
 
 -- MATRICULA_DISCIPLINA -----------------------------------------------
@@ -189,7 +190,7 @@ CREATE TABLE matricula_disciplina (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_matricula_curso INT NOT NULL,
     id_turma INT NOT NULL,
-    codigo VARCHAR(30),
+    codigo VARCHAR(30) NOT NULL,
     data_matricula_disciplina DATE NOT NULL,
     data_trancamento_disciplina DATE,
     nota DECIMAL(5,2),  -- nota final consolidada
