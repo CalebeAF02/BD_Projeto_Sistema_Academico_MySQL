@@ -46,11 +46,29 @@ O banco de dados atende às regras de normalização e conta com **25 entidades 
 
 ---
 
+### 📄 Modelo de Entidade-Relacionamento (MER)
+
+
+### [MER](docs\entregas\2_textualizacao_MER.md)
+
+
+> *Nota: O modelo original em formato de arquivo brModelo encontra-se dentro do diretório `/docs/entregas`.*
+
+---
+
 ### 🖼️ Diagrama de Entidade-Relacionamento (DER)
 
-![Diagrama Entidade-Relacionamento (DER)](src\uml\conceitual\DER_CONCEITUAL.png)
+![Diagrama Entidade-Relacionamento (DER)](src\uml\conceitual\DER.png)
 
-> *Nota: O modelo original em formato de arquivo brModelo encontra-se dentro do diretório `/brModelo`.*
+> *Nota: O modelo original em formato de arquivo brModelo encontra-se dentro do diretório `/src/uml/conceitual`.*
+
+---
+
+### 🖼️ Modelo Relacional (MR)
+
+![Diagrama Entidade-Relacionamento (DER)](src\uml\logico\MR.png)
+
+> *Nota: O modelo original em formato de arquivo brModelo encontra-se dentro do diretório `/src/uml/logico`.*
 
 ---
 
