@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema Acadêmico UnB</title>
+    <!-- O Flask se encarrega de ler o arquivo de estilos externo aqui -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+
+    <!-- Barra Lateral de Navegação -->
+    <div class="sidebar">
+        <h2>🏛️ SGA UnB</h2>
+        <a href="/">🏠 Início</a>
+        <a href="/alunos">👨‍🎓 Gerenciar Alunos</a>
+        <a href="/professores">👨‍🏫 Gerenciar Professores</a>
+        <a href="/disciplinas">📚 Disciplinas</a>
+        <a href="/matriculas">📝 Matricular Aluno</a>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Painel de Controle Acadêmico</h1>
+            <p>Camada gráfica integrada com sucesso ao repositório MySQL.</p>
+        </div>
+
+        <!-- Cards de Gerenciamento Rápido -->
+        <div class="grid-cards">
+            <div class="card">
+                <h3>Módulo de Alunos</h3>
+                <a href="/alunos" class="btn">Abrir Alunos</a>
+            </div>
+            <div class="card">
+                <h3>Matrícula ativa</h3>
+                <a href="/matriculas" class="btn btn-secondary">Nova Matrícula</a>
+            </div>
+            <div class="card">
+                <h3>Status do Banco</h3>
+                <a href="/testar" class="btn" style="background: #7f8c8d;">Testar Conexão</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

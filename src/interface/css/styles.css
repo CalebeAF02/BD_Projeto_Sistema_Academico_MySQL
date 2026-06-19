@@ -1,0 +1,81 @@
+/* Estilos Globais do Sistema Acadêmico */
+body { 
+    font-family: Arial, sans-serif; 
+    margin: 40px; 
+    background-color: #f4f4f9; 
+    color: #333;
+}
+
+.container { 
+    max-width: 1000px; 
+    margin: 0 auto;
+    background: white; 
+    padding: 25px; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+}
+
+h1, h2, h3 { 
+    color: #003366; 
+}
+
+/* Botões Padronizados */
+button, .btn { 
+    background: #003366; 
+    color: white; 
+    border: none; 
+    padding: 10px 15px; 
+    cursor: pointer; 
+    border-radius: 4px; 
+    text-decoration: none;
+    display: inline-block;
+}
+
+button:hover, .btn:hover { 
+    background: #002244; 
+}
+
+.btn-danger { background: #c0392b; }
+.btn-danger:hover { background: #962d22; }
+
+/* Estilização de Tabelas de Dados (Ex: Listagem de Alunos) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #fff;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #003366;
+    color: white;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Formulários (Ex: Cadastrar Aluno) */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}

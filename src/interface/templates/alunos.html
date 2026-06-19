@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>SGA UnB - Gerenciar Alunos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <h1>👨‍🎓 Alunos Cadastrados</h1>
+        <p>Dados vindos diretamente do banco de dados MySQL via SQL puro.</p>
+        
+        <a href="/" class="btn">⬅️ Voltar ao Início</a>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>Sexo</th>
+                    <th>Data de Nascimento</th>
+                    <th>Tipo de Vínculo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for aluno in alunos %}
+                <tr>
+                    <td><strong>{{ aluno.nome }}</strong></td>
+                    <td>{{ aluno.cpf }}</td>
+                    <td>{{ aluno.sexo }}</td>
+                    <td>{{ aluno.data_nascimento }}</td>
+                    <td><span class="btn" style="padding: 2px 5px; font-size: 12px;">{{ aluno.tipo }}</span></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">Nenhum aluno encontrado no banco. Rode o arquivo 05_seeds.sql.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
