@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Professores{% endblock %}
+{% block page_title %}Professores{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+  <div>
+    <h1>Professores Cadastrados</h1>
+    <p>Corpo docente registrado no sistema.</p>
+  </div>
+  <a href="{{ url_for('professores.criar') }}" class="btn btn-primary">+ Novo Professor</a>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>CPF</th>
+          <th>Departamento</th>
+          <th>Tipo</th>
+          <th>Nível</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for prof in professores %}
+        <tr>
+          <td>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:34px; height:34px; border-radius:50%; background:var(--verde-lt); display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; color:var(--verde); flex-shrink:0;">
+                {{ prof.nome[0] }}
+              </div>
+              <span style="font-weight:500;">{{ prof.nome }}</span>
+            </div>
+          </td>
+          <td><span class="codigo-unb">{{ prof.cpf_exibido }}</span></td>
+          <td style="color:var(--muted); font-size:13px;">{{ prof.departamento }}</td>
+          <td>
+            {% if prof.tipo == 'EFETIVO' %}
+              <span class="badge badge-azul">Efetivo</span>
+            {% elif prof.tipo == 'SUBSTITUTO' %}
+              <span class="badge badge-amarelo">Substituto</span>
+            {% elif prof.tipo == 'VISITANTE' %}
+              <span class="badge badge-verde">Visitante</span>
+            {% else %}
+              <span class="badge badge-amarelo">{{ prof.tipo }}</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="badge badge-azul">{{ prof.nivel }}</span>
+          </td>
+          <td>
+            <div style="display:flex; gap:8px;">
+              <a href="{{ url_for('professores.ver', id_pessoa=prof.id_pessoa) }}" class="btn btn-outline btn-sm">Ver</a>
+              <a href="{{ url_for('professores.editar', id_pessoa=prof.id_pessoa) }}" class="btn btn-primary btn-sm">Editar</a>
+              <form method="POST" action="{{ url_for('professores.deletar', id_pessoa=prof.id_pessoa) }}"
+                    onsubmit="return confirm('Remover {{ prof.nome }}?')">
+                <button type="submit" class="btn btn-danger-outline btn-sm">Remover</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              <p>Nenhum professor encontrado. <a href="{{ url_for('professores.criar') }}">Cadastre o primeiro.</a></p>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

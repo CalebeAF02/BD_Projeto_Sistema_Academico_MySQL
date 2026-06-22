@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}{{ prof.nome }}{% endblock %}
+{% block page_title %}Detalhes do Professor{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; gap:12px;">
+  <a href="{{ url_for('professores.listar') }}" class="btn btn-outline btn-sm">← Voltar</a>
+  <div>
+    <h1>{{ prof.nome }}</h1>
+    <p>Informações cadastrais completas.</p>
+  </div>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 2fr; gap:20px; max-width:860px;">
+
+  <!-- Avatar card -->
+  <div class="card" style="text-align:center; padding:32px 20px;">
+    <div style="width:72px; height:72px; border-radius:50%; background:var(--verde-lt); display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:600; color:var(--verde); margin:0 auto 16px;">
+      {{ prof.nome[0] }}
+    </div>
+    <div style="font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600; color:var(--texto);">{{ prof.nome }}</div>
+    <div style="margin-top:8px;">
+      {% if prof.tipo == 'EFETIVO' %}
+        <span class="badge badge-azul">Efetivo</span>
+      {% elif prof.tipo == 'SUBSTITUTO' %}
+        <span class="badge badge-amarelo">Substituto</span>
+      {% else %}
+        <span class="badge badge-verde">{{ prof.tipo }}</span>
+      {% endif %}
+    </div>
+    <div style="margin-top:6px;">
+      <span class="badge badge-azul">{{ prof.nivel }}</span>
+    </div>
+
+    <div style="margin-top:24px; display:flex; flex-direction:column; gap:8px;">
+      <a href="{{ url_for('professores.editar', id_pessoa=prof.id_pessoa) }}" class="btn btn-success" style="width:100%; justify-content:center;">Editar</a>
+      <form method="POST" action="{{ url_for('professores.deletar', id_pessoa=prof.id_pessoa) }}"
+            onsubmit="return confirm('Remover {{ prof.nome }}? Esta ação não pode ser desfeita.')">
+        <button type="submit" class="btn btn-danger-outline" style="width:100%; justify-content:center;">Remover</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dados card -->
+  <div class="card">
+    <h2 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid var(--borda);">Dados Cadastrais</h2>
+
+    <dl style="display:grid; grid-template-columns:160px 1fr; gap:14px 16px; font-size:14px;">
+      <dt style="color:var(--muted); font-weight:500;">ID interno</dt>
+      <dd><span class="codigo-unb">{{ prof.id_pessoa }}</span></dd>
+
+      <dt style="color:var(--muted); font-weight:500;">CPF</dt>
+      <dd><span class="codigo-unb">{{ prof.cpf_exibido }}</span></dd>
+
+      <dt style="color:var(--muted); font-weight:500;">Sexo</dt>
+      <dd>{{ 'Feminino' if prof.sexo == 'F' else 'Masculino' }}</dd>
+
+      <dt style="color:var(--muted); font-weight:500;">Nascimento</dt>
+      <dd>{{ prof.data_nascimento }}</dd>
+
+      <dt style="color:var(--muted); font-weight:500;">Departamento</dt>
+      <dd>{{ prof.departamento }}</dd>
+
+      <dt style="color:var(--muted); font-weight:500;">Tipo</dt>
+      <dd>{{ prof.tipo.capitalize() }}</dd>
+
+      <dt style="color:var(--muted); font-weight:500;">Nível</dt>
+      <dd>{{ prof.nivel.capitalize() }}</dd>
+    </dl>
+  </div>
+
+</div>
+{% endblock %}

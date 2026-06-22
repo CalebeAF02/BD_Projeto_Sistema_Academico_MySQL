@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Histórico — {{ pessoa.nome }}{% endblock %}
+{% block page_title %}Histórico Acadêmico{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; gap:12px;">
+  <a href="{{ url_for('matriculas.listar') }}" class="btn btn-outline btn-sm">← Voltar</a>
+  <div>
+    <h1>{{ pessoa.nome }}</h1>
+    <p>Histórico de disciplinas cursadas e em andamento.</p>
+  </div>
+</div>
+
+<div style="display:grid; grid-template-columns:2fr 1fr; gap:20px; align-items:start;">
+
+  <!-- Histórico de disciplinas (VIEW) -->
+  <div class="card">
+    <h2 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--borda);">
+      📋 Histórico Escolar
+      <span style="font-size:11px; color:var(--muted); font-weight:400; margin-left:8px;">via vw_historico_aluno</span>
+    </h2>
+
+    {% if historico %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Semestre</th>
+            <th>Disciplina</th>
+            <th>Turma</th>
+            <th>Nota</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for h in historico %}
+          <tr>
+            <td><span class="codigo-unb">{{ h.semestre }}</span></td>
+            <td>
+              <div style="font-weight:500; font-size:14px;">{{ h.nome_disciplina }}</div>
+              <div style="font-size:11px; color:var(--muted); font-family:'JetBrains Mono',monospace;">{{ h.codigo_disciplina }}</div>
+            </td>
+            <td><span class="codigo-unb">{{ h.codigo_turma }}</span></td>
+            <td>
+              {% if h.nota_final is not none %}
+                <span style="font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600;
+                  color:{{ 'var(--verde)' if h.nota_final >= 5 else 'var(--danger)' }};">
+                  {{ '%.1f'|format(h.nota_final) }}
+                </span>
+              {% else %}
+                <span style="color:var(--muted); font-size:13px;">—</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if h.status_matricula_disciplina == 'MATRICULADO' %}
+                <span class="badge badge-azul">Em curso</span>
+              {% elif h.status_matricula_disciplina == 'APROVADO' %}
+                <span class="badge badge-verde">Aprovado</span>
+              {% elif h.status_matricula_disciplina == 'REPROVADO' %}
+                <span class="badge badge-danger">Reprovado</span>
+              {% elif h.status_matricula_disciplina == 'TRANCADO' %}
+                <span class="badge badge-amarelo">Trancado</span>
+              {% else %}
+                <span class="badge badge-amarelo">{{ h.status_matricula_disciplina }}</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if h.status_matricula_disciplina == 'MATRICULADO' %}
+              <form method="POST" action="{{ url_for('matriculas.trancar_disciplina', id_md=h.id_matricula_disciplina) }}"
+                    onsubmit="return confirm('Trancar {{ h.nome_disciplina }}?')">
+                <input type="hidden" name="id_pessoa" value="{{ pessoa.id }}">
+                <button type="submit" class="btn btn-danger-outline btn-sm">Trancar</button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <p>Nenhuma disciplina cursada ainda. Matricule-se em uma disciplina ao lado.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Nova matrícula (PROCEDURE) -->
+  <div class="card">
+    <h2 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--borda);">
+      + Nova Matrícula
+      <span style="font-size:11px; color:var(--muted); font-weight:400; margin-left:8px;">via procedure</span>
+    </h2>
+
+    <form method="POST" action="{{ url_for('matriculas.matricular', id_pessoa=pessoa.id) }}">
+      <div class="form-group">
+        <label for="id_oferta">Disciplina disponível</label>
+        <select id="id_oferta" name="id_oferta" required>
+          <option value="">Selecione...</option>
+          {% for o in ofertas %}
+          <option value="{{ o.id_oferta }}">
+            {{ o.codigo_disciplina }} — {{ o.disciplina }}
+            ({{ o.matriculados }}/{{ o.quantidade_vagas }} vagas)
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
+        Matricular
+      </button>
+    </form>
+
+    {% if ofertas|length == 0 %}
+    <div class="alert alert-info" style="margin-top:16px;">
+      Não há ofertas com vagas disponíveis no semestre atual.
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Nova Turma' if modo == 'criar' else 'Editar Turma' }}{% endblock %}
+{% block page_title %}{{ 'Nova Turma' if modo == 'criar' else 'Editar Turma' }}{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; gap:12px;">
+  <a href="{{ url_for('turmas.listar') }}" class="btn btn-outline btn-sm">← Voltar</a>
+  <div>
+    <h1>{{ 'Criar Nova Turma' if modo == 'criar' else 'Editar: ' + turma.codigo }}</h1>
+    <p>{{ 'Vincule a turma a uma oferta e defina as vagas.' if modo == 'criar' else 'Altere os campos desejados e salve.' }}</p>
+  </div>
+</div>
+
+<div class="card" style="max-width:560px;">
+  <form method="POST">
+
+    {% if modo == 'criar' %}
+    <div class="form-group">
+      <label for="id_oferta">Oferta acadêmica *</label>
+      <select id="id_oferta" name="id_oferta" required>
+        <option value="">Selecione...</option>
+        {% for o in ofertas %}
+          <option value="{{ o.id }}" {{ 'selected' if (form.id_oferta or '') == (o.id | string) }}>
+            {{ o.semestre }} — {{ o.codigo_disciplina }} {{ o.disciplina }} ({{ o.curso }})
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    {% else %}
+    <div class="form-group">
+      <label>Oferta</label>
+      <div style="padding:9px 12px; background:var(--surface); border:1px solid var(--borda); border-radius:8px; font-size:14px; color:var(--muted);">
+        {{ turma.semestre }} — {{ turma.codigo_disciplina }} {{ turma.disciplina }} ({{ turma.sigla_curso }})
+      </div>
+    </div>
+    {% endif %}
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <div class="form-group">
+        <label for="codigo">Código da turma * <span style="color:var(--muted); font-weight:400;">(ex: BD-T01)</span></label>
+        <input type="text" id="codigo" name="codigo"
+               value="{{ form.codigo or '' }}"
+               placeholder="BD-T01"
+               maxlength="20"
+               style="font-family:'JetBrains Mono',monospace;"
+               required>
+      </div>
+
+      <div class="form-group">
+        <label for="quantidade_vagas">Vagas *</label>
+        <input type="number" id="quantidade_vagas" name="quantidade_vagas"
+               value="{{ form.quantidade_vagas or '' }}"
+               placeholder="40" min="1" max="200" required>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:12px; margin-top:8px;">
+      <button type="submit" class="btn btn-primary">
+        {{ '+ Criar Turma' if modo == 'criar' else '💾 Salvar Alterações' }}
+      </button>
+      <a href="{{ url_for('turmas.listar') }}" class="btn btn-outline">Cancelar</a>
+    </div>
+
+  </form>
+</div>
+{% endblock %}
