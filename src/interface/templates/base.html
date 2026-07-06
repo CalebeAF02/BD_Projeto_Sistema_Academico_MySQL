@@ -56,6 +56,10 @@
         <span class="nav-icon">🧪</span>
         <span>Demonstração</span>
       </a>
+      <a href="{{ url_for('console.index') }}" class="nav-link {% if request.endpoint and request.endpoint.startswith('console') %}active{% endif %}">
+        <span class="nav-icon">💻</span>
+        <span>Console SQL</span>
+      </a>
       <a href="{{ url_for('rodar_teste_rapido') }}" class="nav-link {% if request.endpoint == 'rodar_teste_rapido' %}active{% endif %}">
         <span class="nav-icon">⚙️</span>
         <span>Status DB</span>

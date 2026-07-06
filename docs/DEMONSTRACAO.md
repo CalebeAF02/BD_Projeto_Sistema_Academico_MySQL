@@ -38,6 +38,28 @@ não volta sozinha ao valor anterior. Se precisar restaurar, basta editar
 outro resultado da mesma matrícula para forçar um novo recálculo (dispara
 `tg_atualiza_nota_final_update`).
 
+## Console SQL (`/console`) — extra
+
+Além do painel por requisito acima, existe um **Console SQL** livre
+(`rotas/console.py` + `services/console_service.py`), pensado como bônus
+de portfólio: uma área "tipo terminal" dentro da própria interface, onde
+dá pra digitar e rodar qualquer consulta.
+
+Por segurança, só é permitido:
+- `SELECT`, `SHOW`, `DESCRIBE`/`DESC`, `EXPLAIN` — sempre somente leitura
+- `CALL` de procedure — pode gravar dado de verdade (ex:
+  `sp_matricular_aluno_em_turma`), a interface avisa isso
+
+Qualquer `INSERT`/`UPDATE`/`DELETE`/`DROP`/`ALTER`/... é bloqueado antes
+de chegar ao MySQL (validação em `validators.validate_console_query`),
+assim como múltiplos comandos separados por `;` ou comentários SQL.
+
+**Importante:** para a demonstração oficial dos requisitos (View,
+Procedure, Trigger, PK automática), o mais recomendado ainda é rodar no
+terminal `mysql` puro — é uma ferramenta neutra, sem qualquer dúvida de
+que o resultado não vem "arranjado" pela própria aplicação. O Console SQL
+é um complemento visual, não substitui essa prova.
+
 ## Acesso
 
 Requer login (o painel está atrás do guard de autenticação, como o resto
@@ -55,4 +77,7 @@ Claude (Anthropic) gerou o blueprint `rotas/demo.py`, os templates em
 mockada) usados para validar cada rota antes do push, com o objetivo de
 criar uma forma de demonstrar visualmente, dentro do próprio app, os
 requisitos obrigatórios da especificação (view, procedure, trigger, PK
-automática e CRUD multi-tabela).
+automática e CRUD multi-tabela). Também gerou o Console SQL
+(`rotas/console.py`, `services/console_service.py`, validação em
+`validators.py`), com o objetivo de oferecer uma área de consulta segura
+e somente-leitura como complemento visual à demonstração.

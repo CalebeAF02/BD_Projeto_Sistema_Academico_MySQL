@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Console SQL{% endblock %}
+{% block page_title %}Console SQL — Área do Desenvolvedor{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Console SQL</h1>
+  <p>Rode consultas direto no banco pela interface. Somente leitura: <span class="badge badge-azul">SELECT</span>
+     <span class="badge badge-azul">SHOW</span> <span class="badge badge-azul">DESCRIBE</span>
+     <span class="badge badge-azul">EXPLAIN</span> e <span class="badge badge-amarelo">CALL</span> de procedures.</p>
+</div>
+
+<div class="alert alert-warning" role="alert">
+  ⚠️ <strong>CALL</strong> executa a procedure de verdade — se ela grava dado (como
+  <code>sp_matricular_aluno_em_turma</code>), o efeito é real no banco. Todo o resto
+  (INSERT/UPDATE/DELETE/DROP/...) é bloqueado antes de chegar ao MySQL.
+</div>
+
+<div class="card" style="margin-bottom: 20px;">
+  <form method="POST" action="{{ url_for('console.index') }}">
+    <div class="form-group">
+      <label for="query">Consulta SQL</label>
+      <textarea id="query" name="query" rows="4" required
+                style="font-family:'JetBrains Mono',monospace; font-size:13px; resize:vertical;"
+                placeholder="SELECT * FROM vw_historico_aluno WHERE id_pessoa = 1;">{{ query }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">▶ Executar</button>
+  </form>
+
+  <div style="margin-top:18px;">
+    <div style="font-size:12px; font-weight:500; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+      Exemplos rápidos
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:8px;">
+      {% for exemplo in exemplos %}
+      <button type="button" class="btn btn-outline btn-sm"
+              onclick="document.getElementById('query').value = {{ exemplo.query | tojson }};">
+        {{ exemplo.titulo }}
+      </button>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% if resultado %}
+  {% if not resultado.ok %}
+    <div class="alert alert-danger" role="alert">
+      <strong>Erro:</strong> {{ resultado.erro }}
+    </div>
+  {% else %}
+    <div class="card">
+      {% if resultado.linhas_afetadas %}
+        <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">
+          {{ resultado.linhas_afetadas }} linha(s) afetada(s).
+        </p>
+      {% endif %}
+
+      {% if resultado.colunas %}
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                {% for coluna in resultado.colunas %}
+                <th>{{ coluna }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for linha in resultado.linhas %}
+              <tr>
+                {% for coluna in resultado.colunas %}
+                <td>{{ linha[coluna] if linha[coluna] is not none else '—' }}</td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% if resultado.truncado %}
+        <p style="font-size:12px; color:var(--muted); margin-top:12px;">
+          Exibindo apenas as primeiras 200 linhas.
+        </p>
+        {% endif %}
+      {% elif not resultado.linhas_afetadas %}
+        <div class="empty-state">
+          <div style="font-size:28px;">✅</div>
+          <p>Comando executado com sucesso, sem linhas para exibir.</p>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endif %}
+{% endblock %}

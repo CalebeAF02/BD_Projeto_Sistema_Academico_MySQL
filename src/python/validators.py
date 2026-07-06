@@ -269,3 +269,53 @@ def validate_professor_form(form: dict, modo: str = 'criar') -> list[str]:
             erros.append(erro_cpf)
 
     return erros
+
+
+# ── Validação do console SQL (área do desenvolvedor) ───────────────────
+
+# Apenas comandos de leitura. CALL fica de fora do "somente leitura" no
+# sentido estrito (procedures podem gravar), mas é permitido de propósito
+# para demonstrar sp_matricular_aluno_em_turma — a interface avisa o risco.
+COMANDOS_PERMITIDOS = ('SELECT', 'SHOW', 'DESCRIBE', 'DESC', 'EXPLAIN', 'CALL')
+
+# Palavras que nunca podem aparecer, mesmo dentro de um CALL/SELECT
+# (bloqueia sub-injeção de um segundo comando via ';' ou comentário).
+PALAVRAS_BLOQUEADAS = (
+    'INSERT', 'UPDATE', 'DELETE', 'DROP', 'ALTER', 'TRUNCATE',
+    'GRANT', 'REVOKE', 'CREATE', 'REPLACE', 'RENAME', 'LOAD_FILE',
+    'INTO OUTFILE', 'INTO DUMPFILE',
+)
+
+
+def validate_console_query(query: str) -> str | None:
+    """
+    Valida que a consulta do console é somente leitura (ou CALL de
+    procedure). Retorna mensagem de erro ou None se estiver ok.
+    """
+    if not query or not query.strip():
+        return 'Digite uma consulta SQL.'
+
+    if len(query) > 2000:
+        return 'Consulta muito longa (máximo 2000 caracteres).'
+
+    corpo = query.strip().rstrip(';').strip()
+
+    if ';' in corpo:
+        return 'Apenas um comando por vez (não use ";" no meio da consulta).'
+
+    if '--' in corpo or '/*' in corpo or '#' in corpo:
+        return 'Comentários SQL não são permitidos no console.'
+
+    primeira_palavra = corpo.split(None, 1)[0].upper() if corpo.split() else ''
+    if primeira_palavra not in COMANDOS_PERMITIDOS:
+        return (
+            f'Comando "{primeira_palavra}" não permitido. '
+            f'Use apenas: {", ".join(COMANDOS_PERMITIDOS)}.'
+        )
+
+    corpo_upper = corpo.upper()
+    for palavra in PALAVRAS_BLOQUEADAS:
+        if palavra in corpo_upper:
+            return f'Palavra "{palavra}" não é permitida no console (somente leitura).'
+
+    return None

@@ -23,12 +23,14 @@ from rotas.matriculas import matriculas_bp
 from rotas.turmas import turmas_bp
 from rotas.auth import auth_bp
 from rotas.demo import demo_bp
+from rotas.console import console_bp
 app.register_blueprint(professores_bp)
 app.register_blueprint(disciplinas_bp)
 app.register_blueprint(matriculas_bp)
 app.register_blueprint(turmas_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(demo_bp)
+app.register_blueprint(console_bp)
 
 # ── Guard de autenticação ────────────────────────────────────────────
 # Bloqueia acesso a qualquer rota fora de /auth e /css sem sessão ativa.
