@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Chave Primária Automática{% endblock %}
+{% block page_title %}Chave Primária Automática{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>🔑 Chave Primária Automática (AUTO_INCREMENT)</h1>
+  <p>O botão abaixo insere uma pessoa <strong>sem informar o campo <code>id</code></strong>. O MySQL gera o valor sozinho.</p>
+</div>
+
+<div class="card" style="margin-bottom:24px;">
+  <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">SQL executado (via <code>PessoaRepository.create</code>):</p>
+  <pre style="background:var(--surface); padding:12px 16px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13px; overflow-x:auto;">INSERT INTO pessoa (nome, cpf, sexo, data_nascimento)
+VALUES (%s, %s, %s, %s);
+-- observe: nenhuma coluna "id" é passada</pre>
+
+  <form method="POST" action="{{ url_for('demo.chave_primaria') }}" style="margin-top:16px;">
+    <button type="submit" class="btn btn-primary">Inserir registro de demonstração</button>
+  </form>
+
+  {% if resultado %}
+  <div class="alert alert-success" style="margin-top:16px;">
+    ID gerado automaticamente pelo MySQL: <strong>{{ resultado.id_gerado }}</strong>
+    ({{ resultado.nome }} — CPF {{ resultado.cpf }})
+  </div>
+  {% endif %}
+</div>
+
+{% if demos %}
+<div class="card">
+  <h2 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; margin-bottom:16px;">Registros de demonstração criados</h2>
+  <table style="width:100%; border-collapse:collapse; font-size:14px;">
+    <thead>
+      <tr style="text-align:left; border-bottom:1px solid var(--borda);">
+        <th style="padding:8px;">ID</th>
+        <th style="padding:8px;">Nome</th>
+        <th style="padding:8px;">CPF</th>
+        <th style="padding:8px;"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in demos %}
+      <tr style="border-bottom:1px solid var(--borda);">
+        <td style="padding:8px;">{{ d.id }}</td>
+        <td style="padding:8px;">{{ d.nome }}</td>
+        <td style="padding:8px;">{{ d.cpf }}</td>
+        <td style="padding:8px; text-align:right;">
+          <form method="POST" action="{{ url_for('demo.chave_primaria_excluir', id_pessoa=d.id) }}">
+            <button type="submit" class="btn btn-danger-outline btn-sm">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}

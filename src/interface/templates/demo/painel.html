@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Demonstração{% endblock %}
+{% block page_title %}Painel de Demonstração de Requisitos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Demonstração ao vivo dos requisitos do projeto</h1>
+  <p>Cada card abaixo executa, de verdade, o item correspondente da especificação — sem precisar sair do app.</p>
+</div>
+
+<div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+
+  <a href="{{ url_for('demo.chave_primaria') }}" style="text-decoration:none;">
+    <div class="card" style="height:100%;">
+      <div style="font-size:28px; margin-bottom:8px;">🔑</div>
+      <h2 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:6px;">Chave Primária Automática</h2>
+      <p style="font-size:13px; color:var(--muted);">Insere um registro sem informar ID e mostra o AUTO_INCREMENT do MySQL gerando sozinho.</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('demo.view_historico') }}" style="text-decoration:none;">
+    <div class="card" style="height:100%;">
+      <div style="font-size:28px; margin-bottom:8px;">📊</div>
+      <h2 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:6px;">View — vw_historico_aluno</h2>
+      <p style="font-size:13px; color:var(--muted);">Consulta o histórico escolar completo de um aluno via a view SQL, com o JOIN de 7 tabelas.</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('demo.procedure') }}" style="text-decoration:none;">
+    <div class="card" style="height:100%;">
+      <div style="font-size:28px; margin-bottom:8px;">⚙️</div>
+      <h2 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:6px;">Procedure — sp_matricular_aluno_em_turma</h2>
+      <p style="font-size:13px; color:var(--muted);">Matricula um aluno numa turma validando vagas dentro do próprio banco. Tente lotar uma turma para ver o SIGNAL de erro.</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('demo.trigger') }}" style="text-decoration:none;">
+    <div class="card" style="height:100%;">
+      <div style="font-size:28px; margin-bottom:8px;">⚡</div>
+      <h2 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:6px;">Trigger — recálculo de nota final</h2>
+      <p style="font-size:13px; color:var(--muted);">Lança uma nova nota de avaliação e mostra a nota final da matrícula sendo recalculada sozinha, sem UPDATE manual.</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('demo.multitabela') }}" style="text-decoration:none;">
+    <div class="card" style="height:100%;">
+      <div style="font-size:28px; margin-bottom:8px;">🔗</div>
+      <h2 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:6px;">CRUD Multi-tabela</h2>
+      <p style="font-size:13px; color:var(--muted);">Matricula um aluno em disciplina mexendo em 4 tabelas numa função só, com validação de integridade referencial.</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('listar_alunos') }}" style="text-decoration:none;">
+    <div class="card" style="height:100%;">
+      <div style="font-size:28px; margin-bottom:8px;">📎</div>
+      <h2 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:6px;">Dado Binário (BLOB)</h2>
+      <p style="font-size:13px; color:var(--muted);">Abra o detalhe de um aluno e faça upload de uma foto — é gravada como LONGBLOB direto no MySQL.</p>
+    </div>
+  </a>
+
+</div>
+{% endblock %}

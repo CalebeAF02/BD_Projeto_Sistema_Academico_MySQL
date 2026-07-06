@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Procedure — Matricular em Turma{% endblock %}
+{% block page_title %}Procedure — sp_matricular_aluno_em_turma{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>⚙️ Procedure — Matricular Aluno em Turma</h1>
+  <p>A validação de vagas acontece <strong>dentro do banco</strong> — a procedure levanta um <code>SIGNAL</code> se a turma estiver lotada.</p>
+</div>
+
+<div class="card" style="margin-bottom:24px;">
+  <form method="POST" action="{{ url_for('demo.procedure') }}">
+    <div class="auth-row">
+      <div class="form-group">
+        <label for="id_matricula_curso">Matrícula de curso</label>
+        <select id="id_matricula_curso" name="id_matricula_curso" required>
+          <option value="">Selecione</option>
+          {% for mc in matriculas_curso %}
+          <option value="{{ mc.id }}">{{ mc.aluno }} — {{ mc.curso }} ({{ mc.codigo }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="id_turma">Turma</label>
+        <select id="id_turma" name="id_turma" required>
+          <option value="">Selecione</option>
+          {% for t in turmas %}
+          <option value="{{ t.id }}">{{ t.codigo }} — {{ t.disciplina }} ({{ t.semestre }})</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Chamar CALL sp_matricular_aluno_em_turma(...)</button>
+  </form>
+</div>
+
+{% if resultado %}
+<div class="card" style="margin-bottom:24px;">
+  <div class="alert alert-success">
+    Matrícula criada — id_matricula_disciplina = <strong>{{ resultado.id_matricula_disciplina }}</strong>
+  </div>
+  <form method="POST" action="{{ url_for('demo.procedure_desfazer', id_matricula_disciplina=resultado.id_matricula_disciplina) }}">
+    <button type="submit" class="btn btn-danger-outline btn-sm">Desfazer (excluir matrícula criada)</button>
+  </form>
+</div>
+{% endif %}
+
+<div class="card">
+  <p style="font-size:13px; color:var(--muted);">💡 Dica para demonstrar o bloqueio: escolha uma turma pequena e matricule alunos até estourar <code>quantidade_vagas</code> — a procedure vai recusar com a mensagem "Turma sem vagas disponíveis".</p>
+</div>
+{% endblock %}

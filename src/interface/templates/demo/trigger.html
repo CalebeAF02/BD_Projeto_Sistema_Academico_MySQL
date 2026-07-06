@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Trigger — Nota Final{% endblock %}
+{% block page_title %}Trigger — Recálculo de Nota Final{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>⚡ Trigger — Recálculo Automático de Nota</h1>
+  <p>Ao inserir um resultado de avaliação, os triggers <code>tg_atualiza_nota_final_insert/update</code> recalculam sozinhos a <code>nota</code> em <code>matricula_disciplina</code> — sem nenhum UPDATE manual no Python.</p>
+</div>
+
+<div class="card" style="margin-bottom:24px;">
+  <form method="POST" action="{{ url_for('demo.trigger') }}">
+    <div class="form-group">
+      <label for="id_matricula_disciplina">Matrícula em disciplina</label>
+      <select id="id_matricula_disciplina" name="id_matricula_disciplina" required>
+        <option value="">Selecione</option>
+        {% for m in matriculas %}
+        <option value="{{ m.id }}">{{ m.aluno }} — {{ m.disciplina }} (nota atual: {{ m.nota if m.nota is not none else '—' }})</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="auth-row">
+      <div class="form-group">
+        <label for="id_avaliacao">Avaliação</label>
+        <select id="id_avaliacao" name="id_avaliacao" required>
+          <option value="">Selecione</option>
+          {% for av in avaliacoes %}
+          <option value="{{ av.id }}">{{ av.titulo }} (peso {{ av.peso }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="nota">Nota lançada</label>
+        <input type="number" id="nota" name="nota" step="0.1" min="0" max="10" required>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Inserir resultado_avaliacao e observar o trigger</button>
+  </form>
+</div>
+
+{% if comparacao %}
+<div class="card">
+  <div class="alert alert-success">
+    Nota final da matrícula {{ comparacao.id_matricula_disciplina }}:
+    <strong>{{ comparacao.nota_antes if comparacao.nota_antes is not none else '—' }}</strong>
+    →
+    <strong>{{ comparacao.nota_depois }}</strong>
+    (recalculada automaticamente pelo trigger)
+  </div>
+  <form method="POST" action="{{ url_for('demo.trigger_desfazer', id_resultado=comparacao.id_resultado) }}">
+    <button type="submit" class="btn btn-danger-outline btn-sm">Desfazer (excluir resultado criado)</button>
+  </form>
+</div>
+{% endif %}
+{% endblock %}

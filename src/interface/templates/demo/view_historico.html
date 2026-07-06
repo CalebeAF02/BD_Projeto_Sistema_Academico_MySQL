@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}View — Histórico do Aluno{% endblock %}
+{% block page_title %}View — vw_historico_aluno{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>📊 View — Histórico Escolar do Aluno</h1>
+  <p>Consulta direta na <code>vw_historico_aluno</code>, que já vem com o JOIN de pessoa, aluno, matrícula, curso, disciplina, turma e semestre.</p>
+</div>
+
+<div class="card" style="margin-bottom:24px;">
+  <form method="GET" action="{{ url_for('demo.view_historico') }}" style="display:flex; gap:12px; align-items:end;">
+    <div class="form-group" style="flex:1; margin-bottom:0;">
+      <label for="id_pessoa">Aluno</label>
+      <select id="id_pessoa" name="id_pessoa" onchange="this.form.submit()">
+        <option value="">Selecione um aluno</option>
+        {% for a in alunos %}
+        <option value="{{ a.id_pessoa }}" {% if id_pessoa == a.id_pessoa %}selected{% endif %}>{{ a.nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </form>
+</div>
+
+<div class="card" style="margin-bottom:24px;">
+  <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">SQL executado:</p>
+  <pre style="background:var(--surface); padding:12px 16px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13px; overflow-x:auto;">{{ sql_executado }}</pre>
+</div>
+
+{% if id_pessoa %}
+<div class="card">
+  {% if linhas %}
+  <table style="width:100%; border-collapse:collapse; font-size:13px;">
+    <thead>
+      <tr style="text-align:left; border-bottom:1px solid var(--borda);">
+        <th style="padding:8px;">Semestre</th>
+        <th style="padding:8px;">Curso</th>
+        <th style="padding:8px;">Disciplina</th>
+        <th style="padding:8px;">Turma</th>
+        <th style="padding:8px;">Nota Final</th>
+        <th style="padding:8px;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for l in linhas %}
+      <tr style="border-bottom:1px solid var(--borda);">
+        <td style="padding:8px;">{{ l.semestre }}</td>
+        <td style="padding:8px;">{{ l.sigla_curso }}</td>
+        <td style="padding:8px;">{{ l.nome_disciplina }}</td>
+        <td style="padding:8px;">{{ l.codigo_turma }}</td>
+        <td style="padding:8px;">{{ l.nota_final if l.nota_final is not none else '—' }}</td>
+        <td style="padding:8px;">{{ l.status_matricula_disciplina }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state"><p>Nenhum histórico encontrado para esse aluno.</p></div>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

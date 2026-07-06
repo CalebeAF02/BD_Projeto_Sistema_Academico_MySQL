@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}CRUD Multi-tabela{% endblock %}
+{% block page_title %}CRUD Multi-tabela — Matrícula em Disciplina{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>🔗 CRUD Multi-tabela com Integridade Referencial</h1>
+  <p><code>matricular_aluno_em_disciplina()</code> valida e escreve em <strong>4 tabelas</strong> (aluno → matricula_curso → turma → matricula_disciplina) numa única função, sem deixar o banco num estado inconsistente.</p>
+</div>
+
+<div class="card" style="margin-bottom:24px;">
+  <form method="POST" action="{{ url_for('demo.multitabela') }}">
+    <div class="auth-row">
+      <div class="form-group">
+        <label for="id_pessoa">Aluno</label>
+        <select id="id_pessoa" name="id_pessoa" required>
+          <option value="">Selecione</option>
+          {% for a in alunos %}
+          <option value="{{ a.id_pessoa }}">{{ a.nome }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="id_oferta">Oferta</label>
+        <select id="id_oferta" name="id_oferta" required>
+          <option value="">Selecione</option>
+          {% for o in ofertas %}
+          <option value="{{ o.id }}">{{ o.disciplina }} — {{ o.curso }} ({{ o.semestre }})</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Matricular (valida aluno → matrícula ativa → turma com vaga)</button>
+  </form>
+</div>
+
+{% if resultado %}
+  {% if resultado.ok %}
+  <div class="card">
+    <div class="alert alert-success">
+      Sucesso — id_matricula_disciplina = <strong>{{ resultado.id_matricula_disciplina }}</strong>,
+      via matrícula de curso {{ resultado.id_matricula_curso }} na turma {{ resultado.id_turma }}.
+    </div>
+    <form method="POST" action="{{ url_for('demo.multitabela_desfazer', id_matricula_disciplina=resultado.id_matricula_disciplina) }}">
+      <button type="submit" class="btn btn-danger-outline btn-sm">Desfazer (excluir matrícula criada)</button>
+    </form>
+  </div>
+  {% else %}
+  <div class="card">
+    <div class="alert alert-danger">
+      Bloqueado pela validação de integridade referencial: {{ resultado.erro }}
+    </div>
+  </div>
+  {% endif %}
+{% endif %}
+
+<div class="card" style="margin-top:24px;">
+  <p style="font-size:13px; color:var(--muted);">💡 Dica: escolha um aluno que <strong>não</strong> tenha matrícula de curso ativa, ou uma oferta sem turmas, para ver a validação de integridade bloqueando a operação em vez de gravar dado incoerente.</p>
+</div>
+{% endblock %}
