@@ -398,6 +398,92 @@ table tr:hover td { background: var(--surface); }
 
 .empty-state p { font-size: 14px; margin-top: 8px; }
 
+/* ── Autenticação (login / registro / esqueci senha) ── */
+.auth-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--azul);
+  background: linear-gradient(160deg, var(--azul) 0%, var(--azul-md) 100%);
+  padding: 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  padding: 36px 32px;
+}
+
+.auth-logo {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.auth-logo .logo-sigla {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--azul);
+}
+
+.auth-logo .logo-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.auth-logo .logo-bar {
+  display: block;
+  width: 32px;
+  height: 3px;
+  background: var(--amarelo);
+  border-radius: 2px;
+  margin: 10px auto 0;
+}
+
+.auth-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--texto);
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.auth-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.auth-footer a {
+  color: var(--azul);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.auth-footer a:hover { text-decoration: underline; }
+
+.auth-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btn-block { width: 100%; justify-content: center; }
+
 /* ── Responsivo ── */
 @media (max-width: 768px) {
   .sidebar { width: 60px; }

@@ -79,6 +79,96 @@ def validate_sexo(sexo: str) -> str | None:
     return None
 
 
+# ── Validação de autenticação (login / registro / senha) ──────────────
+
+EMAIL_REGEX = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+
+
+def validate_email(email: str) -> str | None:
+    """Valida formato básico de e-mail."""
+    if not email:
+        return 'E-mail é obrigatório.'
+    if len(email) > 150:
+        return 'E-mail deve ter no máximo 150 caracteres.'
+    if not EMAIL_REGEX.match(email):
+        return 'E-mail inválido.'
+    return None
+
+
+def validate_senha(senha: str) -> str | None:
+    """Exige no mínimo 8 caracteres, com letra e número (sem regras exóticas)."""
+    if not senha:
+        return 'Senha é obrigatória.'
+    if len(senha) < 8:
+        return 'Senha deve ter no mínimo 8 caracteres.'
+    if not re.search(r'[A-Za-z]', senha) or not re.search(r'\d', senha):
+        return 'Senha deve conter letras e números.'
+    return None
+
+
+def validate_login_form(form: dict) -> list[str]:
+    erros = []
+    email = sanitize_str(form.get('email', ''))
+    senha = form.get('senha', '')
+    erro = validate_email(email)
+    if erro:
+        erros.append(erro)
+    if not senha:
+        erros.append('Senha é obrigatória.')
+    return erros
+
+
+def validate_registro_form(form: dict) -> list[str]:
+    """Valida cadastro de novo aluno + conta de acesso."""
+    erros = []
+    nome  = sanitize_str(form.get('nome', ''))
+    cpf   = sanitize_digits(form.get('cpf', ''))
+    sexo  = sanitize_str(form.get('sexo', ''))
+    data  = sanitize_str(form.get('data_nascimento', ''))
+    email = sanitize_str(form.get('email', ''))
+    senha = form.get('senha', '')
+    confirmar_senha = form.get('confirmar_senha', '')
+
+    for fn, val in [
+        (validate_nome, nome),
+        (validate_cpf, cpf),
+        (validate_sexo, sexo),
+        (validate_data_nascimento, data),
+        (validate_email, email),
+        (validate_senha, senha),
+    ]:
+        erro = fn(val)
+        if erro:
+            erros.append(erro)
+
+    if senha and confirmar_senha and senha != confirmar_senha:
+        erros.append('As senhas não conferem.')
+
+    return erros
+
+
+def validate_esqueci_senha_form(form: dict) -> list[str]:
+    """Valida a redefinição de senha (confirmação por e-mail + CPF)."""
+    erros = []
+    email = sanitize_str(form.get('email', ''))
+    cpf   = sanitize_digits(form.get('cpf', ''))
+    nova_senha = form.get('nova_senha', '')
+    confirmar_senha = form.get('confirmar_senha', '')
+
+    for fn, val in [
+        (validate_email, email),
+        (validate_cpf, cpf),
+        (validate_senha, nova_senha),
+    ]:
+        erro = fn(val)
+        if erro:
+            erros.append(erro)
+    if nova_senha and confirmar_senha and nova_senha != confirmar_senha:
+        erros.append('As senhas não conferem.')
+
+    return erros
+
+
 # ── Validação específica de professor ─────────────────────────────────
 
 TIPOS_PROFESSOR = ('EFETIVO', 'SUBSTITUTO', 'VISITANTE', 'COLABORADOR')

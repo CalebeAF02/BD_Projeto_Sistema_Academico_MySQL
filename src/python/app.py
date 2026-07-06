@@ -1,6 +1,6 @@
 import os
 import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 
 CORRENTE_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR      = os.path.dirname(CORRENTE_DIR)
@@ -21,10 +21,37 @@ from rotas.professores import professores_bp
 from rotas.disciplinas import disciplinas_bp
 from rotas.matriculas import matriculas_bp
 from rotas.turmas import turmas_bp
+from rotas.auth import auth_bp
 app.register_blueprint(professores_bp)
 app.register_blueprint(disciplinas_bp)
 app.register_blueprint(matriculas_bp)
 app.register_blueprint(turmas_bp)
+app.register_blueprint(auth_bp)
+
+# ── Guard de autenticação ────────────────────────────────────────────
+# Bloqueia acesso a qualquer rota fora de /auth e /css sem sessão ativa.
+ENDPOINTS_PUBLICOS = {'auth.login', 'auth.registrar', 'auth.esqueci_senha', 'static'}
+
+
+@app.before_request
+def exigir_login():
+    if request.endpoint in ENDPOINTS_PUBLICOS or request.endpoint is None:
+        return None
+    if not session.get('id_conta'):
+        flash('Faça login para continuar.', 'info')
+        return redirect(url_for('auth.login'))
+    return None
+
+
+@app.context_processor
+def injetar_usuario_logado():
+    return {
+        'usuario_logado': {
+            'nome': session.get('nome'),
+            'email': session.get('email'),
+            'tipo': session.get('tipo'),
+        } if session.get('id_conta') else None
+    }
 
 def get_aluno_completo(id_pessoa):
     conn = get_connection()

@@ -40,6 +40,7 @@ mysql -u root -p < src/sql/01_views.sql
 mysql -u root -p < src/sql/02_procedures.sql
 mysql -u root -p < src/sql/03_triggers.sql
 mysql -u root -p < src/sql/05_seeds.sql
+mysql -u root -p < src/sql/06_atualizar_senhas.sql
 ```
 
 ---
@@ -97,6 +98,7 @@ para cada cenário.
 | Trigger (×2) | `03_triggers.sql` | Recalcula nota final após INSERT/UPDATE em `resultado_avaliacao` |
 | BLOB | `04_alter_foto.sql` | Coluna `foto LONGBLOB` em `pessoa` |
 | Seeds | `05_seeds.sql` | 5+ registros nas 25 tabelas |
+| Migração de senhas | `06_atualizar_senhas.sql` | Hashes reais (werkzeug scrypt) para as 10 contas de seed — senha padrão `senha123` |
 
 ---
 
