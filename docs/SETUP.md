@@ -41,6 +41,7 @@ mysql -u root -p < src/sql/02_procedures.sql
 mysql -u root -p < src/sql/03_triggers.sql
 mysql -u root -p < src/sql/05_seeds.sql
 mysql -u root -p < src/sql/06_atualizar_senhas.sql
+mysql -u root -p < src/sql/07_corrigir_matricula_duplicada.sql
 ```
 
 ---
@@ -99,6 +100,7 @@ para cada cenário.
 | BLOB | `04_alter_foto.sql` | Coluna `foto LONGBLOB` em `pessoa` |
 | Seeds | `05_seeds.sql` | 5+ registros nas 25 tabelas |
 | Migração de senhas | `06_atualizar_senhas.sql` | Hashes reais (werkzeug scrypt) para as 10 contas de seed — senha padrão `senha123` |
+| Correção matrícula duplicada | `07_corrigir_matricula_duplicada.sql` | Limpa duplicatas de teste, adiciona `UNIQUE(id_matricula_curso, id_turma)` e recria a procedure com checagem de "já matriculado" |
 
 ---
 

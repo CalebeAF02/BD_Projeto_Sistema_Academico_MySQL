@@ -1,19 +1,43 @@
 -- =====================================================================
--- Procedures do projeto
+-- Correção: aluno conseguia ser matriculado várias vezes na mesma turma
+-- (sp_matricular_aluno_em_turma não checava matrícula existente).
+-- Executar APÓS 06_atualizar_senhas.sql.
 -- =====================================================================
 
 USE projeto_unb;
 
+-- ---------------------------------------------------------------------
+-- 1. Limpa duplicatas já criadas em testes (mantém a matrícula mais
+--    antiga de cada par aluno+turma, apaga as repetidas).
+--    ON DELETE CASCADE já cuida de resultado_avaliacao e frequencia
+--    ligados às linhas removidas.
+-- ---------------------------------------------------------------------
+DELETE md1 FROM matricula_disciplina md1
+INNER JOIN matricula_disciplina md2
+    ON md1.id_matricula_curso = md2.id_matricula_curso
+   AND md1.id_turma = md2.id_turma
+   AND md1.id > md2.id;
+
+-- ---------------------------------------------------------------------
+-- 2. Trava no nível do banco: mesmo que alguém insira direto via SQL
+--    (sem passar pela procedure), o MySQL recusa duplicata.
+--    Obs: TRANCADO também entra na constraint — não é possível
+--    matricular > 1x na mesma turma nem depois de trancar, hoje.
+--    Se o grupo quiser permitir re-matrícula após trancamento, essa
+--    constraint precisaria virar uma unique parcial (não suportado
+--    nativamente no MySQL) — fora do escopo desta correção.
+-- ---------------------------------------------------------------------
+ALTER TABLE matricula_disciplina
+    ADD CONSTRAINT uq_matricula_curso_turma UNIQUE (id_matricula_curso, id_turma);
+
+-- ---------------------------------------------------------------------
+-- 3. Recria a procedure com a checagem de "já matriculado" (mesma
+--    lógica já atualizada em src/sql/02_procedures.sql).
+-- ---------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS sp_matricular_aluno_em_turma;
 
 DELIMITER //
 
--- ---------------------------------------------------------------------
--- sp_matricular_aluno_em_turma
--- Insere registro em matricula_disciplina após validar vagas.
--- Levanta SIGNAL '45000' se a turma não existir ou estiver lotada.
--- Retorna SELECT com o id gerado para consumo pelo Python.
--- ---------------------------------------------------------------------
 CREATE PROCEDURE sp_matricular_aluno_em_turma(
     IN p_id_matricula_curso INT,
     IN p_id_turma           INT
@@ -24,7 +48,6 @@ BEGIN
     DECLARE v_ja_matriculado INT;
     DECLARE v_codigo         VARCHAR(30);
 
-    -- Valida se a turma existe e obtém a capacidade
     SELECT quantidade_vagas INTO v_vagas
     FROM turma
     WHERE id = p_id_turma;
@@ -34,8 +57,6 @@ BEGIN
             SET MESSAGE_TEXT = 'Turma não encontrada';
     END IF;
 
-    -- Impede matricular o mesmo aluno duas vezes na mesma turma
-    -- (trancado não conta — permite refazer a matrícula depois de trancar)
     SELECT COUNT(*) INTO v_ja_matriculado
     FROM matricula_disciplina
     WHERE id_matricula_curso = p_id_matricula_curso
@@ -47,7 +68,6 @@ BEGIN
             SET MESSAGE_TEXT = 'Aluno já matriculado nesta turma';
     END IF;
 
-    -- Conta alunos ativos (exclui trancados)
     SELECT COUNT(*) INTO v_matriculados
     FROM matricula_disciplina
     WHERE id_turma = p_id_turma
