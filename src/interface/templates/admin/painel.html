@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Console Central{% endblock %}
+{% block page_title %}Console Central — Painel do Administrador{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Console Central</h1>
+  <p>Visão geral do ecossistema acadêmico — {{ semestre_atual.nome if semestre_atual else 'sem semestre cadastrado' }}.</p>
+</div>
+
+<div class="card-grid">
+  <div class="stat-card">
+    <div class="stat-label">Pessoas Cadastradas</div>
+    <div class="stat-value">{{ total_pessoas }}</div>
+  </div>
+
+  <div class="stat-card verde">
+    <div class="stat-label">Alunos</div>
+    <div class="stat-value">{{ total_alunos }}</div>
+  </div>
+
+  <div class="stat-card azul">
+    <div class="stat-label">Professores</div>
+    <div class="stat-value">{{ total_professores }}</div>
+  </div>
+
+  <div class="stat-card amarelo">
+    <div class="stat-label">Contas Ativas</div>
+    <div class="stat-value">{{ contas_ativas }}</div>
+  </div>
+</div>
+
+<div class="card-grid">
+  <div class="stat-card">
+    <div class="stat-label">Turmas Abertas ({{ semestre_atual.nome if semestre_atual else '—' }})</div>
+    <div class="stat-value">{{ turmas_abertas }}</div>
+  </div>
+
+  <div class="stat-card verde">
+    <div class="stat-label">Matrículas Ativas</div>
+    <div class="stat-value">{{ matriculas_ativas }}</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-label">Infraestrutura</div>
+    <div class="stat-value" style="font-size:16px; margin-top:8px;">
+      {{ total_departamentos }} deptos · {{ total_predios }} prédios · {{ total_salas }} salas
+    </div>
+  </div>
+
+  <div class="stat-card amarelo">
+    <div class="stat-label">Tabelas no Banco</div>
+    <div class="stat-value">{{ total_tabelas }}</div>
+  </div>
+</div>
+
+<div class="page-header" style="margin-top: 8px;">
+  <h2 style="font-size: 18px;">Gestão</h2>
+</div>
+
+<div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 28px;">
+  <a href="{{ url_for('listar_alunos') }}" style="text-decoration:none;">
+    <div class="card" style="height:100%;">
+      <div style="font-size:28px; margin-bottom:8px;">👨‍🎓</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:6px;">Alunos</h3>
+      <p style="font-size:13px; color:var(--muted);">Cadastro, edição e histórico de alunos.</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('professores.listar') }}" style="text-decoration:none;">
+    <div class="card" style="height:100%;">
+      <div style="font-size:28px; margin-bottom:8px;">👨‍🏫</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:6px;">Professores</h3>
+      <p style="font-size:13px; color:var(--muted);">Cadastro e vínculo departamental de docentes.</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('disciplinas.listar') }}" style="text-decoration:none;">
+    <div class="card" style="height:100%;">
+      <div style="font-size:28px; margin-bottom:8px;">📚</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:6px;">Disciplinas</h3>
+      <p style="font-size:13px; color:var(--muted);">Grade de disciplinas e materiais de estudo.</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('turmas.listar') }}" style="text-decoration:none;">
+    <div class="card" style="height:100%;">
+      <div style="font-size:28px; margin-bottom:8px;">🏛️</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:6px;">Turmas</h3>
+      <p style="font-size:13px; color:var(--muted);">Turmas abertas, vagas e alocação de professores.</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('matriculas.listar') }}" style="text-decoration:none;">
+    <div class="card" style="height:100%;">
+      <div style="font-size:28px; margin-bottom:8px;">📝</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:6px;">Matrículas</h3>
+      <p style="font-size:13px; color:var(--muted);">Matrícula de alunos em turmas, com validação de vagas.</p>
+    </div>
+  </a>
+</div>
+
+<div class="page-header" style="margin-top: 8px;">
+  <h2 style="font-size: 18px;">Ferramentas Técnicas</h2>
+</div>
+
+<div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+  <a href="{{ url_for('demo.painel') }}" style="text-decoration:none;">
+    <div class="card" style="height:100%;">
+      <div style="font-size:28px; margin-bottom:8px;">🧪</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:6px;">Demonstração</h3>
+      <p style="font-size:13px; color:var(--muted);">Roda ao vivo os requisitos obrigatórios do projeto (PK, view, procedure, trigger).</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('console.index') }}" style="text-decoration:none;">
+    <div class="card" style="height:100%;">
+      <div style="font-size:28px; margin-bottom:8px;">💻</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:6px;">Console SQL</h3>
+      <p style="font-size:13px; color:var(--muted);">Consultas somente-leitura direto no banco pela interface.</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('rodar_teste_rapido') }}" style="text-decoration:none;">
+    <div class="card" style="height:100%;">
+      <div style="font-size:28px; margin-bottom:8px;">⚙️</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:var(--texto); margin-bottom:6px;">Status do Banco</h3>
+      <p style="font-size:13px; color:var(--muted);">Verifica a conexão MySQL em tempo real.</p>
+    </div>
+  </a>
+</div>
+{% endblock %}

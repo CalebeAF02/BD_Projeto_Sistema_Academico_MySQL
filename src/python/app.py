@@ -26,6 +26,7 @@ from rotas.demo import demo_bp
 from rotas.console import console_bp
 from rotas.aluno import aluno_bp
 from rotas.professor import professor_bp
+from rotas.admin import admin_bp
 app.register_blueprint(professores_bp)
 app.register_blueprint(disciplinas_bp)
 app.register_blueprint(matriculas_bp)
@@ -35,6 +36,7 @@ app.register_blueprint(demo_bp)
 app.register_blueprint(console_bp)
 app.register_blueprint(aluno_bp)
 app.register_blueprint(professor_bp)
+app.register_blueprint(admin_bp)
 
 # ── Guard de autenticação ────────────────────────────────────────────
 # Bloqueia acesso a qualquer rota fora de /auth e /css sem sessão ativa.
@@ -43,7 +45,7 @@ ENDPOINTS_PUBLICOS = {'auth.login', 'auth.registrar', 'auth.esqueci_senha', 'sta
 # Blueprints restritos a contas tipo ADMIN (procedures/triggers/views e
 # o console SQL cru não fazem sentido pro usuário final — aluno/professor
 # não devem nem ver esses menus).
-BLUEPRINTS_SOMENTE_ADMIN = {'demo', 'console'}
+BLUEPRINTS_SOMENTE_ADMIN = {'demo', 'console', 'admin'}
 ENDPOINTS_SOMENTE_ADMIN = {'rodar_teste_rapido'}
 
 # Blueprints restritos a contas tipo ALUNO.
@@ -104,6 +106,8 @@ def home():
         return redirect(url_for('aluno.painel'))
     if session.get('tipo') == 'PROFESSOR':
         return redirect(url_for('professor.painel'))
+    if session.get('tipo') == 'ADMIN':
+        return redirect(url_for('admin.painel'))
     return render_template('index.html')
 
 @app.route('/alunos')
