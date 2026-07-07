@@ -38,7 +38,7 @@ não volta sozinha ao valor anterior. Se precisar restaurar, basta editar
 outro resultado da mesma matrícula para forçar um novo recálculo (dispara
 `tg_atualiza_nota_final_update`).
 
-## Console SQL (`/console`) — extra
+## Console SQL (`/sql-console`) — extra
 
 Além do painel por requisito acima, existe um **Console SQL** livre
 (`rotas/console.py` + `services/console_service.py`), pensado como bônus

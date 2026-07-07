@@ -4,13 +4,18 @@
 # diretamente pela interface, como bônus visual da demonstração.
 # Validação em validators.validate_console_query bloqueia qualquer
 # comando de escrita direta (INSERT/UPDATE/DELETE/DROP/...).
+#
+# IMPORTANTE: o prefixo NÃO pode ser '/console'. Com app.run(debug=True),
+# o Werkzeug reserva esse caminho pro próprio console Python interativo
+# de debug (protegido por PIN, mas ainda assim é execução de código
+# arbitrário) — qualquer rota Flask em '/console' fica encoberta por ele.
 
 from flask import Blueprint, render_template, request
 
 from services.console_service import executar_consulta
 from validators import validate_console_query
 
-console_bp = Blueprint('console', __name__, url_prefix='/console')
+console_bp = Blueprint('console', __name__, url_prefix='/sql-console')
 
 CONSULTAS_EXEMPLO = [
     {"titulo": "Ver tabelas do banco", "query": "SHOW TABLES;"},
