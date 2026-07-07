@@ -16,12 +16,14 @@ SET NAMES utf8mb4;
 --    ON DELETE CASCADE já cuida de resultado_avaliacao e frequencia
 --    ligados às linhas removidas.
 -- ---------------------------------------------------------------------
+/*
 DELETE md1 FROM matricula_disciplina md1
 INNER JOIN matricula_disciplina md2
     ON md1.id_matricula_curso = md2.id_matricula_curso
    AND md1.id_turma = md2.id_turma
    AND md1.id > md2.id;
 
+*/
 -- ---------------------------------------------------------------------
 -- 2. Trava no nível do banco: mesmo que alguém insira direto via SQL
 --    (sem passar pela procedure), o MySQL recusa duplicata.

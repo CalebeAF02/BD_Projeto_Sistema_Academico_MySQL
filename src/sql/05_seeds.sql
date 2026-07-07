@@ -111,11 +111,11 @@ INSERT INTO conta (id, id_pessoa, email, senha, tipo, status) VALUES
 (3,  3,  'carla.lima@aluno.unb.br',     '$2b$12$placeholderHashAluno3xxxx', 'ALUNO',     'ATIVA'),
 (4,  4,  'diego.pereira@aluno.unb.br',  '$2b$12$placeholderHashAluno4xxxx', 'ALUNO',     'ATIVA'),
 (5,  5,  'eduarda.costa@aluno.unb.br',  '$2b$12$placeholderHashAluno5xxxx', 'ALUNO',     'ATIVA'),
-(6,  6,  'fernando.dibio@unb.br',       '$2b$12$placeholderHashProf6xxxxx', 'PROFESSOR', 'ATIVA'),
-(7,  7,  'gisele.monteiro@unb.br',      '$2b$12$placeholderHashProf7xxxxx', 'PROFESSOR', 'ATIVA'),
-(8,  8,  'helio.tavares@unb.br',        '$2b$12$placeholderHashProf8xxxxx', 'PROFESSOR', 'ATIVA'),
-(9,  9,  'ingrid.nunes@unb.br',         '$2b$12$placeholderHashProf9xxxxx', 'PROFESSOR', 'ATIVA'),
-(10, 10, 'joao.fagundes@unb.br',        '$2b$12$placeholderHashProf10xxxx', 'PROFESSOR', 'ATIVA');
+(6,  6,  'fernando.dibio@professor.unb.br',       '$2b$12$placeholderHashProf6xxxxx', 'PROFESSOR', 'ATIVA'),
+(7,  7,  'gisele.monteiro@professor.unb.br',      '$2b$12$placeholderHashProf7xxxxx', 'PROFESSOR', 'ATIVA'),
+(8,  8,  'helio.tavares@professor.unb.br',        '$2b$12$placeholderHashProf8xxxxx', 'PROFESSOR', 'ATIVA'),
+(9,  9,  'ingrid.nunes@professor.unb.br',         '$2b$12$placeholderHashProf9xxxxx', 'PROFESSOR', 'ATIVA'),
+(10, 10, 'joao.fagundes@professor.unb.br',        '$2b$12$placeholderHashProf10xxxx', 'PROFESSOR', 'ATIVA');
 
 -- =====================================================================
 -- 10. PREDIO
