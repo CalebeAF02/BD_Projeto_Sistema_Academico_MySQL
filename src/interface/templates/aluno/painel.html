@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Meu Painel{% endblock %}
+{% block page_title %}Painel do Aluno{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Olá, {{ perfil.nome if perfil else usuario_logado.nome }}</h1>
+  <p>
+    {% if perfil and perfil.curso %}
+      {{ perfil.curso }} ({{ perfil.sigla }}) — matrícula {{ perfil.codigo }}
+    {% else %}
+      Nenhuma matrícula de curso ativa encontrada.
+    {% endif %}
+  </p>
+</div>
+
+<div class="card-grid">
+  <div class="stat-card {% if media_geral is not none and media_geral < 6 %}danger{% else %}verde{% endif %}">
+    <div class="stat-label">Média Geral</div>
+    <div class="stat-value">{{ '%.2f'|format(media_geral) if media_geral is not none else '—' }}</div>
+  </div>
+
+  <div class="stat-card {% if percentual_frequencia is not none and percentual_frequencia < 75 %}danger{% else %}azul{% endif %}">
+    <div class="stat-label">Frequência Geral</div>
+    <div class="stat-value">{{ percentual_frequencia ~ '%' if percentual_frequencia is not none else '—' }}</div>
+  </div>
+
+  <div class="stat-card amarelo">
+    <div class="stat-label">Disciplinas em Curso</div>
+    <div class="stat-value">{{ disciplinas|length }}</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-label">Metas em Andamento</div>
+    <div class="stat-value">{{ metas|length }}</div>
+  </div>
+</div>
+
+{% if alertas_nota %}
+<div class="alert alert-danger" role="alert">
+  ⚠️ Atenção: {{ alertas_nota|length }} disciplina(s) com nota abaixo de 6,0 —
+  {% for a in alertas_nota %}{{ a.disciplina }}{% if not loop.last %}, {% endif %}{% endfor %}
+</div>
+{% endif %}
+
+<div class="card" style="margin-bottom: 20px;">
+  <h3 style="margin-bottom: 12px;">📚 Disciplinas do Semestre</h3>
+  {% if disciplinas %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Disciplina</th>
+          <th>Turma</th>
+          <th>Semestre</th>
+          <th>Nota</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in disciplinas %}
+        <tr>
+          <td>{{ d.disciplina }}<br><span class="codigo-unb">{{ d.codigo_disciplina }}</span></td>
+          <td><span class="badge badge-azul">{{ d.turma }}</span></td>
+          <td>{{ d.semestre }}</td>
+          <td>
+            {% if d.nota is not none %}
+              <span class="{% if d.nota|float < 6 %}badge badge-danger{% else %}badge badge-verde{% endif %}">{{ '%.1f'|format(d.nota|float) }}</span>
+            {% else %}—{% endif %}
+          </td>
+          <td><span class="badge badge-azul">{{ d.status }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><p>Nenhuma disciplina matriculada no momento.</p></div>
+  {% endif %}
+</div>
+
+<div class="card-grid" style="grid-template-columns: 1fr 1fr;">
+  <div class="card">
+    <h3 style="margin-bottom: 12px;">🎯 Metas de Estudo</h3>
+    {% if metas %}
+      {% for m in metas %}
+      <div style="padding: 10px 0; border-bottom: 1px solid var(--borda);">
+        <strong>{{ m.titulo }}</strong>
+        <div style="font-size: 13px; color: var(--muted);">{{ m.horas }}h — prazo {{ m.prazo }}</div>
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="empty-state"><p>Nenhuma meta em andamento. Que tal criar uma?</p></div>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom: 12px;">🔔 Notificações Recentes</h3>
+    {% if notificacoes %}
+      {% for n in notificacoes %}
+      <div style="padding: 10px 0; border-bottom: 1px solid var(--borda);">
+        <strong>{{ n.titulo }}</strong>
+        <div style="font-size: 13px; color: var(--muted);">{{ n.mensagem }}</div>
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="empty-state"><p>Nenhuma notificação por aqui.</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
