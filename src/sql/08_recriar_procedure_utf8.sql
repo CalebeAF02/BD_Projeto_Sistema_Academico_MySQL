@@ -1,5 +1,9 @@
 -- =====================================================================
--- Procedures do projeto
+-- Recria SOMENTE a procedure sp_matricular_aluno_em_turma.
+-- Use este script se 07_corrigir_matricula_duplicada.sql já rodou uma
+-- vez e falhou depois com "Duplicate key name 'uq_matricula_curso_turma'"
+-- em uma re-execução — isso indica que a constraint já existe e só
+-- falta garantir que a procedure foi recriada com UTF-8 correto.
 -- =====================================================================
 
 USE projeto_unb;
@@ -12,12 +16,6 @@ DROP PROCEDURE IF EXISTS sp_matricular_aluno_em_turma;
 
 DELIMITER //
 
--- ---------------------------------------------------------------------
--- sp_matricular_aluno_em_turma
--- Insere registro em matricula_disciplina após validar vagas.
--- Levanta SIGNAL '45000' se a turma não existir ou estiver lotada.
--- Retorna SELECT com o id gerado para consumo pelo Python.
--- ---------------------------------------------------------------------
 CREATE PROCEDURE sp_matricular_aluno_em_turma(
     IN p_id_matricula_curso INT,
     IN p_id_turma           INT
@@ -28,7 +26,6 @@ BEGIN
     DECLARE v_ja_matriculado INT;
     DECLARE v_codigo         VARCHAR(30);
 
-    -- Valida se a turma existe e obtém a capacidade
     SELECT quantidade_vagas INTO v_vagas
     FROM turma
     WHERE id = p_id_turma;
@@ -38,8 +35,6 @@ BEGIN
             SET MESSAGE_TEXT = 'Turma não encontrada';
     END IF;
 
-    -- Impede matricular o mesmo aluno duas vezes na mesma turma
-    -- (trancado não conta — permite refazer a matrícula depois de trancar)
     SELECT COUNT(*) INTO v_ja_matriculado
     FROM matricula_disciplina
     WHERE id_matricula_curso = p_id_matricula_curso
@@ -51,7 +46,6 @@ BEGIN
             SET MESSAGE_TEXT = 'Aluno já matriculado nesta turma';
     END IF;
 
-    -- Conta alunos ativos (exclui trancados)
     SELECT COUNT(*) INTO v_matriculados
     FROM matricula_disciplina
     WHERE id_turma = p_id_turma

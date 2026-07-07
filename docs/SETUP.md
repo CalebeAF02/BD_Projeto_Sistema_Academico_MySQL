@@ -31,8 +31,28 @@ cp .env.example .env
 # Edite .env com suas credenciais MySQL
 ```
 
-**3. Suba o banco de dados** — execute os scripts na ordem abaixo no MySQL:
+**3. Suba o banco de dados** — execute os scripts na ordem abaixo.
 
+⚠️ **Windows/PowerShell:** NÃO use `Get-Content arquivo.sql | mysql ...`.
+O PowerShell 5.1 não lê o arquivo como UTF-8 por padrão, e os acentos
+(á, ã, ç, ê...) chegam corrompidos no banco — inclusive dentro de
+mensagens de erro de procedures/triggers. Use o comando `source` do
+próprio cliente MySQL, que lê o arquivo direto do disco:
+
+```powershell
+mysql -u root -p --default-character-set=utf8mb4 -e "source C:/caminho/completo/src/sql/00_criar_tabelas.sql"
+mysql -u root -p --default-character-set=utf8mb4 -e "source C:/caminho/completo/src/sql/04_alter_foto.sql"
+mysql -u root -p --default-character-set=utf8mb4 -e "source C:/caminho/completo/src/sql/01_views.sql"
+mysql -u root -p --default-character-set=utf8mb4 -e "source C:/caminho/completo/src/sql/02_procedures.sql"
+mysql -u root -p --default-character-set=utf8mb4 -e "source C:/caminho/completo/src/sql/03_triggers.sql"
+mysql -u root -p --default-character-set=utf8mb4 -e "source C:/caminho/completo/src/sql/05_seeds.sql"
+mysql -u root -p --default-character-set=utf8mb4 -e "source C:/caminho/completo/src/sql/06_atualizar_senhas.sql"
+mysql -u root -p --default-character-set=utf8mb4 -e "source C:/caminho/completo/src/sql/07_corrigir_matricula_duplicada.sql"
+```
+(use `/` no caminho, mesmo no Windows — o cliente MySQL prefere assim.
+Troque `C:/caminho/completo` pelo caminho real do seu clone.)
+
+**Linux/macOS:**
 ```bash
 mysql -u root -p < src/sql/00_criar_tabelas.sql
 mysql -u root -p < src/sql/04_alter_foto.sql
@@ -43,6 +63,12 @@ mysql -u root -p < src/sql/05_seeds.sql
 mysql -u root -p < src/sql/06_atualizar_senhas.sql
 mysql -u root -p < src/sql/07_corrigir_matricula_duplicada.sql
 ```
+
+Todos os scripts a partir de agora começam com `SET NAMES utf8mb4;`
+logo após o `USE projeto_unb;` — isso garante que a sessão do cliente
+usa UTF-8 independente do codepage do terminal (cp850 no Windows,
+latin1 em algumas instalações padrão), então mesmo se alguém usar um
+método diferente de carregar o arquivo, o risco de corrupção é bem menor.
 
 ---
 
@@ -101,6 +127,7 @@ para cada cenário.
 | Seeds | `05_seeds.sql` | 5+ registros nas 25 tabelas |
 | Migração de senhas | `06_atualizar_senhas.sql` | Hashes reais (werkzeug scrypt) para as 10 contas de seed — senha padrão `senha123` |
 | Correção matrícula duplicada | `07_corrigir_matricula_duplicada.sql` | Limpa duplicatas de teste, adiciona `UNIQUE(id_matricula_curso, id_turma)` e recria a procedure com checagem de "já matriculado" |
+| Recriação isolada da procedure | `08_recriar_procedure_utf8.sql` | Só recria `sp_matricular_aluno_em_turma` — use se `07` já rodou uma vez e a 2ª execução falhar com "Duplicate key" antes de chegar na procedure |
 
 ---
 

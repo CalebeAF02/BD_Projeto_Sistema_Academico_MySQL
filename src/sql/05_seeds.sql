@@ -6,6 +6,10 @@
 
 USE projeto_unb;
 
+-- Força UTF-8 na sessão, independente do codepage do cliente
+-- (evita corrupção de acentos em clientes Windows com console cp850)
+SET NAMES utf8mb4;
+
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- =====================================================================

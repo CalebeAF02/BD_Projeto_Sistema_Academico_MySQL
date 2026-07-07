@@ -7,6 +7,10 @@
 
 USE projeto_unb;
 
+-- Força UTF-8 na sessão, independente do codepage do cliente
+-- (evita corrupção de acentos em clientes Windows com console cp850)
+SET NAMES utf8mb4;
+
 DROP TRIGGER IF EXISTS tg_atualiza_nota_final_insert;
 DROP TRIGGER IF EXISTS tg_atualiza_nota_final_update;
 

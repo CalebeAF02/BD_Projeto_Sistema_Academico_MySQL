@@ -7,6 +7,10 @@
 
 USE projeto_unb;
 
+-- Força UTF-8 na sessão, independente do codepage do cliente
+-- (evita corrupção de acentos em clientes Windows com console cp850)
+SET NAMES utf8mb4;
+
 UPDATE conta SET senha = 'scrypt:32768:8:1$PMfvScVtSSVpSHhk$1b84bc0992e5bcaacad4b4bd18da6cb87ec5f1434e766e3450ddde5ba4ae2025eefa4f78badd2d734f575e9288596db2a0d30076f23276736c9716380a3d28b6' WHERE id = 1;
 UPDATE conta SET senha = 'scrypt:32768:8:1$KPJOUvS4XALCN9Mf$0c01e9650eca1ab8753c20d31ccf8abe6667ea20e2240f4ce4eb95ca4798582b9be9cbfbfee71054efd2ea24b80954d1427685b5069395db12a1fa0ac1ce9852' WHERE id = 2;
 UPDATE conta SET senha = 'scrypt:32768:8:1$GYTW5Oti4Xo5rYHX$cd488e629074092acb2615d64a3d867324b0a332e7c0bad9b7f74a89ccf6482c01d01ad70adc24d101e03b3c58f6e3db3d4e8ba193db77c45ab1ac7de1df65c8' WHERE id = 3;

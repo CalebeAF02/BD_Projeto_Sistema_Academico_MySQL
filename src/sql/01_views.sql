@@ -4,6 +4,10 @@
 
 USE projeto_unb;
 
+-- Força UTF-8 na sessão, independente do codepage do cliente
+-- (evita corrupção de acentos em clientes Windows com console cp850)
+SET NAMES utf8mb4;
+
 -- ---------------------------------------------------------------------
 -- vw_historico_aluno
 -- Histórico escolar completo de um aluno: todas as disciplinas
