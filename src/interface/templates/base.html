@@ -22,7 +22,7 @@
 
     <nav class="sidebar-nav" aria-label="Navegação principal">
       <div class="nav-label">Principal</div>
-      <a href="{{ url_for('home') }}" class="nav-link {% if request.endpoint == 'home' or request.endpoint == 'aluno.painel' %}active{% endif %}">
+      <a href="{{ url_for('home') }}" class="nav-link {% if request.endpoint == 'home' or request.endpoint == 'aluno.painel' or request.endpoint == 'professor.painel' %}active{% endif %}">
         <span class="nav-icon">🏠</span>
         <span>Painel</span>
       </a>

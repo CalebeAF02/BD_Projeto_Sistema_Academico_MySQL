@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Meu Painel{% endblock %}
+{% block page_title %}Painel do Professor{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Olá, {{ perfil.nome if perfil else usuario_logado.nome }}</h1>
+  <p>
+    {% if perfil %}
+      {{ perfil.departamento }} — {{ perfil.tipo }}, {{ perfil.nivel }}
+    {% else %}
+      Nenhum vínculo departamental encontrado.
+    {% endif %}
+  </p>
+</div>
+
+<div class="card-grid">
+  <div class="stat-card">
+    <div class="stat-label">Turmas Ativas</div>
+    <div class="stat-value">{{ turmas|length }}</div>
+  </div>
+
+  <div class="stat-card verde">
+    <div class="stat-label">Total de Alunos</div>
+    <div class="stat-value">{{ total_alunos }}</div>
+  </div>
+
+  <div class="stat-card {% if avaliacoes_pendentes %}amarelo{% endif %}">
+    <div class="stat-label">Avaliações Pendentes de Correção</div>
+    <div class="stat-value">{{ avaliacoes_pendentes|length }}</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-label">Próximos Eventos</div>
+    <div class="stat-value">{{ proximos_eventos|length }}</div>
+  </div>
+</div>
+
+{% if avaliacoes_pendentes %}
+<div class="alert alert-warning" role="alert">
+  📝 Você tem {{ avaliacoes_pendentes|length }} resultado(s) de avaliação aguardando correção.
+</div>
+{% endif %}
+
+<div class="card" style="margin-bottom: 20px;">
+  <h3 style="margin-bottom: 12px;">🏛️ Minhas Turmas</h3>
+  {% if turmas %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Disciplina</th>
+          <th>Turma</th>
+          <th>Semestre</th>
+          <th>Função</th>
+          <th>Alunos</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in turmas %}
+        <tr>
+          <td>{{ t.disciplina }}<br><span class="codigo-unb">{{ t.codigo_disciplina }}</span></td>
+          <td><span class="badge badge-azul">{{ t.turma }}</span></td>
+          <td>{{ t.semestre }}</td>
+          <td><span class="badge badge-verde">{{ t.funcao }}</span></td>
+          <td>{{ t.matriculados }} / {{ t.quantidade_vagas }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><p>Nenhuma turma sob sua responsabilidade no momento.</p></div>
+  {% endif %}
+</div>
+
+<div class="card-grid" style="grid-template-columns: 1fr 1fr;">
+  <div class="card">
+    <h3 style="margin-bottom: 12px;">📝 Avaliações Pendentes</h3>
+    {% if avaliacoes_pendentes %}
+      {% for a in avaliacoes_pendentes %}
+      <div style="padding: 10px 0; border-bottom: 1px solid var(--borda);">
+        <strong>{{ a.avaliacao }}</strong>
+        <div style="font-size: 13px; color: var(--muted);">{{ a.disciplina }} — {{ a.turma }} — <span class="badge badge-amarelo">{{ a.status }}</span></div>
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="empty-state"><p>Nenhuma correção pendente. Tudo em dia!</p></div>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom: 12px;">📅 Próximos Eventos</h3>
+    {% if proximos_eventos %}
+      {% for e in proximos_eventos %}
+      <div style="padding: 10px 0; border-bottom: 1px solid var(--borda);">
+        <strong>{{ e.titulo }}</strong>
+        <div style="font-size: 13px; color: var(--muted);">{{ e.disciplina }} ({{ e.turma }}) — {{ e.data_inicio }}{% if e.local %} — {{ e.local }}{% endif %}</div>
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="empty-state"><p>Nenhum evento agendado.</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

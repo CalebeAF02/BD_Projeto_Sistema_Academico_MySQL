@@ -25,6 +25,7 @@ from rotas.auth import auth_bp
 from rotas.demo import demo_bp
 from rotas.console import console_bp
 from rotas.aluno import aluno_bp
+from rotas.professor import professor_bp
 app.register_blueprint(professores_bp)
 app.register_blueprint(disciplinas_bp)
 app.register_blueprint(matriculas_bp)
@@ -33,6 +34,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(demo_bp)
 app.register_blueprint(console_bp)
 app.register_blueprint(aluno_bp)
+app.register_blueprint(professor_bp)
 
 # ── Guard de autenticação ────────────────────────────────────────────
 # Bloqueia acesso a qualquer rota fora de /auth e /css sem sessão ativa.
@@ -46,6 +48,9 @@ ENDPOINTS_SOMENTE_ADMIN = {'rodar_teste_rapido'}
 
 # Blueprints restritos a contas tipo ALUNO.
 BLUEPRINTS_SOMENTE_ALUNO = {'aluno'}
+
+# Blueprints restritos a contas tipo PROFESSOR.
+BLUEPRINTS_SOMENTE_PROFESSOR = {'professor'}
 
 
 @app.before_request
@@ -64,6 +69,9 @@ def exigir_login():
         return redirect(url_for('home'))
     if request.blueprint in BLUEPRINTS_SOMENTE_ALUNO and session.get('tipo') != 'ALUNO':
         flash('Essa área é exclusiva para contas de aluno.', 'danger')
+        return redirect(url_for('home'))
+    if request.blueprint in BLUEPRINTS_SOMENTE_PROFESSOR and session.get('tipo') != 'PROFESSOR':
+        flash('Essa área é exclusiva para contas de professor.', 'danger')
         return redirect(url_for('home'))
     return None
 
@@ -94,6 +102,8 @@ def get_aluno_completo(id_pessoa):
 def home():
     if session.get('tipo') == 'ALUNO':
         return redirect(url_for('aluno.painel'))
+    if session.get('tipo') == 'PROFESSOR':
+        return redirect(url_for('professor.painel'))
     return render_template('index.html')
 
 @app.route('/alunos')
