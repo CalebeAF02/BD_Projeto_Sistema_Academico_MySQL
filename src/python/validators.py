@@ -313,9 +313,21 @@ def validate_console_query(query: str) -> str | None:
             f'Use apenas: {", ".join(COMANDOS_PERMITIDOS)}.'
         )
 
+    partes = corpo.split(None, 2)
+    segunda_palavra = partes[1].upper() if len(partes) > 1 else ''
+
     corpo_upper = corpo.upper()
     for palavra in PALAVRAS_BLOQUEADAS:
-        if palavra in corpo_upper:
+        # 'SHOW CREATE TABLE/PROCEDURE/VIEW/...' é introspecção somente
+        # leitura — não é a mesma coisa que um comando CREATE de verdade.
+        if palavra == 'CREATE' and primeira_palavra == 'SHOW' and segunda_palavra == 'CREATE':
+            continue
+        # Limite de palavra: não barra coluna/tabela cujo nome só CONTÉM
+        # a palavra bloqueada (ex.: "created_at", "data_criacao" tem "CRIA"
+        # mas não "CREATE"; already_dropped não deveria travar por causa
+        # de "DROP" dentro do nome).
+        padrao = r'\b' + re.escape(palavra) + r'\b'
+        if re.search(padrao, corpo_upper):
             return f'Palavra "{palavra}" não é permitida no console (somente leitura).'
 
     return None
