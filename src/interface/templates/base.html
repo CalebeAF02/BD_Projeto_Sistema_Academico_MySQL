@@ -51,7 +51,8 @@
         <span>Turmas</span>
       </a>
 
-      <div class="nav-label">Sistema</div>
+      {% if usuario_logado and usuario_logado.tipo == 'ADMIN' %}
+      <div class="nav-label">Administração</div>
       <a href="{{ url_for('demo.painel') }}" class="nav-link {% if request.endpoint and request.endpoint.startswith('demo') %}active{% endif %}">
         <span class="nav-icon">🧪</span>
         <span>Demonstração</span>
@@ -64,6 +65,7 @@
         <span class="nav-icon">⚙️</span>
         <span>Status DB</span>
       </a>
+      {% endif %}
     </nav>
   </aside>
 

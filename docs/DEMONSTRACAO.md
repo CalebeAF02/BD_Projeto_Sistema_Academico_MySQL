@@ -63,12 +63,17 @@ que o resultado não vem "arranjado" pela própria aplicação. O Console SQL
 ## Acesso
 
 Requer login (o painel está atrás do guard de autenticação, como o resto
-do sistema). Use a conta de demonstração:
+do sistema). **A partir de agora, só contas com papel `ADMIN` acessam
+este painel e o Console SQL** — aluno e professor nem veem o link no
+menu lateral. Use a conta admin de demonstração:
 
 ```
-E-mail: ana.ferreira@aluno.unb.br
-Senha:  senha123
+E-mail: admin@sga.unb.br
+Senha:  admin123
 ```
+
+(a conta `ana.ferreira@aluno.unb.br` continua funcionando pro resto do
+sistema, só perde acesso a `/demo`, `/sql-console` e `/testar`)
 
 ## Uso de IA
 

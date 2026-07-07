@@ -36,6 +36,12 @@ app.register_blueprint(console_bp)
 # Bloqueia acesso a qualquer rota fora de /auth e /css sem sessão ativa.
 ENDPOINTS_PUBLICOS = {'auth.login', 'auth.registrar', 'auth.esqueci_senha', 'static'}
 
+# Blueprints restritos a contas tipo ADMIN (procedures/triggers/views e
+# o console SQL cru não fazem sentido pro usuário final — aluno/professor
+# não devem nem ver esses menus).
+BLUEPRINTS_SOMENTE_ADMIN = {'demo', 'console'}
+ENDPOINTS_SOMENTE_ADMIN = {'rodar_teste_rapido'}
+
 
 @app.before_request
 def exigir_login():
@@ -44,6 +50,13 @@ def exigir_login():
     if not session.get('id_conta'):
         flash('Faça login para continuar.', 'info')
         return redirect(url_for('auth.login'))
+    eh_area_admin = (
+        request.blueprint in BLUEPRINTS_SOMENTE_ADMIN
+        or request.endpoint in ENDPOINTS_SOMENTE_ADMIN
+    )
+    if eh_area_admin and session.get('tipo') != 'ADMIN':
+        flash('Essa área é restrita a contas de administrador.', 'danger')
+        return redirect(url_for('home'))
     return None
 
 

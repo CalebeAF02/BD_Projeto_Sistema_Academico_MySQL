@@ -48,6 +48,8 @@ mysql -u root -p --default-character-set=utf8mb4 -e "source C:/caminho/completo/
 mysql -u root -p --default-character-set=utf8mb4 -e "source C:/caminho/completo/src/sql/05_seeds.sql"
 mysql -u root -p --default-character-set=utf8mb4 -e "source C:/caminho/completo/src/sql/06_atualizar_senhas.sql"
 mysql -u root -p --default-character-set=utf8mb4 -e "source C:/caminho/completo/src/sql/07_corrigir_matricula_duplicada.sql"
+mysql -u root -p --default-character-set=utf8mb4 -e "source C:/caminho/completo/src/sql/08_recriar_procedure_utf8.sql"
+mysql -u root -p --default-character-set=utf8mb4 -e "source C:/caminho/completo/src/sql/09_criar_conta_admin.sql"
 ```
 (use `/` no caminho, mesmo no Windows — o cliente MySQL prefere assim.
 Troque `C:/caminho/completo` pelo caminho real do seu clone.)
@@ -62,6 +64,8 @@ mysql -u root -p < src/sql/03_triggers.sql
 mysql -u root -p < src/sql/05_seeds.sql
 mysql -u root -p < src/sql/06_atualizar_senhas.sql
 mysql -u root -p < src/sql/07_corrigir_matricula_duplicada.sql
+mysql -u root -p < src/sql/08_recriar_procedure_utf8.sql
+mysql -u root -p < src/sql/09_criar_conta_admin.sql
 ```
 
 Todos os scripts a partir de agora começam com `SET NAMES utf8mb4;`
@@ -128,6 +132,7 @@ para cada cenário.
 | Migração de senhas | `06_atualizar_senhas.sql` | Hashes reais (werkzeug scrypt) para as 10 contas de seed — senha padrão `senha123` |
 | Correção matrícula duplicada | `07_corrigir_matricula_duplicada.sql` | Limpa duplicatas de teste, adiciona `UNIQUE(id_matricula_curso, id_turma)` e recria a procedure com checagem de "já matriculado" |
 | Recriação isolada da procedure | `08_recriar_procedure_utf8.sql` | Só recria `sp_matricular_aluno_em_turma` — use se `07` já rodou uma vez e a 2ª execução falhar com "Duplicate key" antes de chegar na procedure |
+| Conta admin | `09_criar_conta_admin.sql` | Cria a conta de demonstração com papel `ADMIN` (`admin@sga.unb.br` / `admin123`) — necessária pra acessar `/demo` e `/sql-console`, que agora são restritos a administradores |
 
 ---
 
