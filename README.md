@@ -1,6 +1,6 @@
 # 🎓 Sistema de Acompanhamento Acadêmico
 
-> 📖 **[Acesse a Wiki completa do projeto](docs/wiki.md)** — arquitetura, setup do zero, scripts SQL, camada de persistência e troubleshooting.
+> 📖 **[Acesse a Wiki completa do projeto]** — arquitetura, setup do zero, scripts SQL, camada de persistência e troubleshooting.
 
 
 Projeto desenvolvido para a disciplina de **Banco de Dados** do Departamento de Ciência da Computação (CIC) do Instituto de Ciências Exatas (IE) na **Universidade de Brasília (UnB)**.
