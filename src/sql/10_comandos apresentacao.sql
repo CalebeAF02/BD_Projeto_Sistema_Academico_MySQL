@@ -16,13 +16,6 @@ SELECT COUNT(*) FROM matricula_disciplina;
 -- BLOCO 3 — CALEBE — Banco de Dados no SGBD
 -- =====================================================================
 
--- Mostra as 25 tabelas do projeto
-SHOW TABLES;
-
--- Confirma 5+ registros por tabela (exemplo: pessoa e curso)
-SELECT COUNT(*) FROM pessoa;
-SELECT * FROM curso;
-
 -- Chave primária automática (AUTO_INCREMENT)
 INSERT INTO departamento (nome) VALUES ('Departamento de Demonstração');
 SELECT LAST_INSERT_ID();

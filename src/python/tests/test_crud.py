@@ -2,6 +2,11 @@
 Script de validação do CRUD - executa sem framework de testes formal.
 Rode a partir de src/python/:
     python tests/test_crud.py
+
+Importante: esse script deve ser o primeiro teste executado após criar o banco
+and carregar os scripts SQL, pois alguns cenários dependem de dados já
+presentes no banco (seeds, relacionamentos e IDs esperados). Alterações no
+schema ou nos dados iniciais podem causar falhas em testes posteriores.
 """
 import sys
 import os
@@ -408,7 +413,13 @@ def testar_matricula_multitabela():
 def testar_historico_aluno():
     secao("View - buscar_historico_aluno (vw_historico_aluno)")
 
-    historico = buscar_historico_aluno(id_aluno=1)
+    try:
+        historico = buscar_historico_aluno(id_aluno=1)
+    except Exception as e:
+        falha("buscar_historico_aluno lançou exceção", str(e))
+        return
+    
+    
     if historico:
         h = historico[0]
         ok("buscar_historico_aluno (aluno seed id=1)", f"{len(historico)} linha(s)")

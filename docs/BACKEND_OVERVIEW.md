@@ -44,8 +44,10 @@ Acesso completo às principais entidades do sistema:
 
 ### 5. **Testes Automatizados**
 - `test_crud.py` — Valida todas as operações CRUD
+- Deve ser o primeiro teste executado após criar o banco e carregar os scripts SQL
 - Testa fotos, procedures, triggers, views
 - Imprime `[OK]` ou `[FALHA]` para cada cenário
+- É importante porque alguns cenários dependem de dados já presentes no banco (seeds e relacionamentos), então alterações no schema podem causar erros
 
 ---
 

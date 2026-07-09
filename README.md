@@ -1,5 +1,8 @@
 # 🎓 Sistema de Acompanhamento Acadêmico
 
+> 📖 **[Acesse a Wiki completa do projeto](docs/wiki.md)** — arquitetura, setup do zero, scripts SQL, camada de persistência e troubleshooting.
+
+
 Projeto desenvolvido para a disciplina de **Banco de Dados** do Departamento de Ciência da Computação (CIC) do Instituto de Ciências Exatas (IE) na **Universidade de Brasília (UnB)**.
 
 O sistema consiste em uma plataforma de apoio voltada a auxiliar estudantes no acompanhamento detalhado de suas disciplinas, frequências, avaliações, materiais didáticos, notificações de desempenho e metas de estudo pessoais durante o semestre letivo, além de otimizar a gestão de turmas e diários de classe pelos professores.
@@ -49,24 +52,24 @@ O banco de dados atende às regras de normalização e conta com **25 entidades 
 ### 📄 Modelo de Entidade-Relacionamento (MER)
 
 
-### [MER](docs\entregas\2_textualizacao_MER.md)
+### [MER](src/uml/conceitual/2_textualizacao_MER.md)
 
-
-> *Nota: O modelo original em formato de arquivo brModelo encontra-se dentro do diretório `/docs/entregas`.*
-
----
-
-### 🖼️ Diagrama de Entidade-Relacionamento (DER)
-
-![Diagrama Entidade-Relacionamento (DER)](src\uml\conceitual\DER.png)
 
 > *Nota: O modelo original em formato de arquivo brModelo encontra-se dentro do diretório `/src/uml/conceitual`.*
 
 ---
 
+### 🖼️ Diagrama de Entidade-Relacionamento (DER)
+
+![Diagrama Entidade-Relacionamento (DER)](src/uml/diagrama/DER.png)
+
+> *Nota: O modelo original em formato de arquivo brModelo encontra-se dentro do diretório `/src/uml/diagrama`.*
+
+---
+
 ### 🖼️ Modelo Relacional (MR)
 
-![Diagrama Entidade-Relacionamento (DER)](src\uml\logico\MR.png)
+![Modelo Relacional (MR)](src/uml/logico/MR.png)
 
 > *Nota: O modelo original em formato de arquivo brModelo encontra-se dentro do diretório `/src/uml/logico`.*
 

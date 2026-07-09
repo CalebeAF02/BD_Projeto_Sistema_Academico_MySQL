@@ -113,6 +113,13 @@ cd src/python
 python tests/test_crud.py
 ```
 
+⚠️ Ordem recomendada de validação: execute primeiro `python tests/test_crud.py`
+after criar o banco e carregar os scripts SQL. Esse script é a primeira
+validação a ser feita porque vários cenários dependem de dados já presentes
+no banco (seeds, relacionamentos e IDs esperados). Após alterações no schema
+ou nos dados de seed, podem aparecer erros de dependência e falhas em testes
+posteriores.
+
 O script conecta ao banco, exercita cada função CRUD, testa a foto (BLOB),
 aciona a procedure `sp_matricular_aluno_em_turma`, verifica os triggers de
 nota e consulta a view `vw_historico_aluno`. Imprime `[OK]` ou `[FALHA]`
