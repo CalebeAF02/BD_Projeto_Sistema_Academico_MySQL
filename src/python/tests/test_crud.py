@@ -408,7 +408,12 @@ def testar_matricula_multitabela():
 def testar_historico_aluno():
     secao("View - buscar_historico_aluno (vw_historico_aluno)")
 
-    historico = buscar_historico_aluno(id_aluno=1)
+    try:
+        historico = buscar_historico_aluno(id_aluno=1)
+    except Exception as e:
+        falha("buscar_historico_aluno lançou exceção", str(e))
+        return
+
     if historico:
         h = historico[0]
         ok("buscar_historico_aluno (aluno seed id=1)", f"{len(historico)} linha(s)")
